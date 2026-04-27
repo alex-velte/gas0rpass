@@ -805,8 +805,9 @@ async function runReport() {
   const mileage = document.getElementById('mileage').value.trim();
   const vin = document.getElementById('vin').value.trim();
 
-  if (!year || !make || !model) {
-    alert('Please select a Year, Make, and Model.');
+  // Allow VIN-only OR year+make+model
+  if (!vin && (!year || !make || !model)) {
+    alert('Please either enter a VIN, or select a Year, Make, and Model.');
     return;
   }
 
@@ -1208,7 +1209,7 @@ async function downloadPDF() {
     if (col.mid) { doc.setDrawColor(...DARK_GREEN.map(c => Math.min(255, c + 100))); doc.setLineWidth(0.8); doc.roundedRect(cx, y, colW, 52, 3, 3, 'S'); }
     doc.setFontSize(7.5); doc.setFont('helvetica','bold'); doc.setTextColor(...LIGHT_GRAY);
     doc.text(col.label, cx + colW/2, y + 14, { align: 'center' });
-    doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.setTextColor(col.mid ? ...DARK_GREEN : ...DARK_GRAY);
+    doc.setFontSize(16); doc.setFont('helvetica','bold'); if (col.mid) { doc.setTextColor(...DARK_GREEN); } else { doc.setTextColor(...DARK_GRAY); }
     doc.text(col.val || '-', cx + colW/2, y + 36, { align: 'center' });
   });
   y += 62;
