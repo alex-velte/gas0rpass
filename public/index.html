@@ -320,7 +320,7 @@
 <body>
 
 <header>
-  <div class="logo" onclick="resetToSearch()">Gas <span>or</span> Pass</div>
+  <div class="logo" onclick="resetToSearch()">Gas or Pass</div>
   <div class="tagline">AI-Powered Vehicle Research Reports</div>
 </header>
 
@@ -781,7 +781,7 @@ function onModelChange() {
   });
 }
 
-populateYears();
+document.addEventListener('DOMContentLoaded', populateYears);
 
 // ─── REPORT LOGIC ────────────────────────────────────────────────────────────
 let currentReport = null;
