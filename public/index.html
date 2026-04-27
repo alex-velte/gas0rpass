@@ -781,7 +781,7 @@ function onModelChange() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', populateYears);
+
 
 // ─── REPORT LOGIC ────────────────────────────────────────────────────────────
 let currentReport = null;
@@ -1291,6 +1291,9 @@ async function downloadPDF() {
 
   doc.save(`GasOrPass_${(r.vehicle || 'Report').replace(/\s+/g, '_')}.pdf`);
 }
+
+// Run on load
+populateYears();
 </script>
 
 </body>
