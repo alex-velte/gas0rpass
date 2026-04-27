@@ -374,13 +374,25 @@
       <div class="form-row-2">
         <div class="form-group">
           <label>Trim Level <span style="color:var(--muted);font-weight:300">(optional)</span></label>
-          <select id="trimSelect" disabled>
+          <select id="trimSelect" onchange="onTrimChange()" disabled>
             <option value="">Select Trim</option>
           </select>
         </div>
         <div class="form-group">
+          <label>Engine <span style="color:var(--muted);font-weight:300">(optional)</span></label>
+          <select id="engineSelect" disabled>
+            <option value="">Select Engine</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
           <label>Mileage <span style="color:var(--muted);font-weight:300">(optional)</span></label>
           <input type="number" id="mileage" placeholder="e.g. 85000" min="0" max="999999" />
+        </div>
+        <div class="form-group" style="display:flex;align-items:flex-end;">
+          <!-- spacer -->
         </div>
       </div>
 
@@ -824,6 +836,340 @@ function onMakeChange() {
   });
 }
 
+// ─── ENGINE DATA ─────────────────────────────────────────────────────────────
+// Keyed by "Make|Model|Trim" -> array of engine strings
+// Covers the most common variants. Falls back to AI knowledge if not listed.
+const ENGINE_DATA = {
+  // SUBARU — most important for engine specificity
+  "Subaru|Outback|Base":              ["2.5L 4-Cyl H4 (175 hp)"],
+  "Subaru|Outback|Premium":           ["2.5L 4-Cyl H4 (175 hp)"],
+  "Subaru|Outback|Sport":             ["2.5L 4-Cyl H4 (175 hp)"],
+  "Subaru|Outback|Limited":           ["2.5L 4-Cyl H4 (175 hp)"],
+  "Subaru|Outback|Touring":           ["2.5L 4-Cyl H4 (175 hp)"],
+  "Subaru|Outback|Wilderness":        ["2.5L 4-Cyl H4 (175 hp)"],
+  "Subaru|Outback|XT Premium":        ["2.4L Turbo 4-Cyl H4 (260 hp)"],
+  "Subaru|Outback|XT Touring":        ["2.4L Turbo 4-Cyl H4 (260 hp)"],
+  "Subaru|Outback|XT Limited":        ["2.4L Turbo 4-Cyl H4 (260 hp)"],
+  "Subaru|Outback|3.6R Limited":      ["3.6L 6-Cyl H6 (256 hp) — Most Reliable"],
+  "Subaru|Outback|3.6R Touring":      ["3.6L 6-Cyl H6 (256 hp) — Most Reliable"],
+  "Subaru|Forester|Base":             ["2.5L 4-Cyl H4 (182 hp)"],
+  "Subaru|Forester|Premium":          ["2.5L 4-Cyl H4 (182 hp)"],
+  "Subaru|Forester|Sport":            ["2.5L 4-Cyl H4 (182 hp)"],
+  "Subaru|Forester|Limited":          ["2.5L 4-Cyl H4 (182 hp)"],
+  "Subaru|Forester|Touring":          ["2.5L 4-Cyl H4 (182 hp)"],
+  "Subaru|Forester|Wilderness":       ["2.5L 4-Cyl H4 (182 hp)"],
+  "Subaru|Legacy|Base":               ["2.5L 4-Cyl H4 (175 hp)"],
+  "Subaru|Legacy|Premium":            ["2.5L 4-Cyl H4 (175 hp)"],
+  "Subaru|Legacy|Sport":              ["2.4L Turbo 4-Cyl H4 (260 hp)"],
+  "Subaru|Legacy|Limited":            ["2.5L 4-Cyl H4 (175 hp)"],
+  "Subaru|Legacy|Touring":            ["2.5L 4-Cyl H4 (175 hp)"],
+  "Subaru|Legacy|Outback 2.5i":       ["2.5L 4-Cyl H4 (175 hp)"],
+  "Subaru|Legacy|Outback 3.6R":       ["3.6L 6-Cyl H6 (256 hp) — Most Reliable"],
+  "Subaru|WRX|Base":                  ["2.0L Turbo 4-Cyl H4 (268 hp)"],
+  "Subaru|WRX|Premium":               ["2.0L Turbo 4-Cyl H4 (268 hp)"],
+  "Subaru|WRX|Limited":               ["2.4L Turbo 4-Cyl H4 (271 hp)"],
+  "Subaru|WRX|GT":                    ["2.4L Turbo 4-Cyl H4 (271 hp)"],
+  "Subaru|WRX|STI":                   ["2.5L Turbo 4-Cyl H4 (310 hp)"],
+  "Subaru|WRX|STI Limited":           ["2.5L Turbo 4-Cyl H4 (310 hp)"],
+  "Subaru|WRX|STI Sport":             ["2.5L Turbo 4-Cyl H4 (310 hp)"],
+  "Subaru|Crosstrek|Base":            ["2.0L 4-Cyl H4 (152 hp)","2.5L 4-Cyl H4 (182 hp)"],
+  "Subaru|Crosstrek|Premium":         ["2.0L 4-Cyl H4 (152 hp)","2.5L 4-Cyl H4 (182 hp)"],
+  "Subaru|Crosstrek|Sport":           ["2.5L 4-Cyl H4 (182 hp)"],
+  "Subaru|Crosstrek|Limited":         ["2.5L 4-Cyl H4 (182 hp)"],
+  "Subaru|Crosstrek|Wilderness":      ["2.5L 4-Cyl H4 (182 hp)"],
+  "Subaru|Impreza|Base":              ["2.0L 4-Cyl H4 (152 hp)"],
+  "Subaru|Impreza|Premium":           ["2.0L 4-Cyl H4 (152 hp)"],
+  "Subaru|Impreza|Sport":             ["2.0L 4-Cyl H4 (152 hp)"],
+  "Subaru|Impreza|Limited":           ["2.0L 4-Cyl H4 (152 hp)"],
+
+  // TOYOTA
+  "Toyota|Camry|LE":                  ["2.5L 4-Cyl (203 hp)"],
+  "Toyota|Camry|SE":                  ["2.5L 4-Cyl (203 hp)"],
+  "Toyota|Camry|XSE":                 ["2.5L 4-Cyl (203 hp)","3.5L V6 (301 hp)"],
+  "Toyota|Camry|XLE":                 ["2.5L 4-Cyl (203 hp)","3.5L V6 (301 hp)"],
+  "Toyota|Camry|TRD":                 ["3.5L V6 (301 hp)"],
+  "Toyota|Camry|Hybrid LE":           ["2.5L 4-Cyl Hybrid (208 hp combined)"],
+  "Toyota|Camry|Hybrid SE":           ["2.5L 4-Cyl Hybrid (208 hp combined)"],
+  "Toyota|Camry|Hybrid XLE":          ["2.5L 4-Cyl Hybrid (208 hp combined)"],
+  "Toyota|Tacoma|SR":                 ["2.7L 4-Cyl (159 hp)","3.5L V6 (278 hp)"],
+  "Toyota|Tacoma|SR5":                ["2.7L 4-Cyl (159 hp)","3.5L V6 (278 hp)"],
+  "Toyota|Tacoma|TRD Sport":          ["3.5L V6 (278 hp)"],
+  "Toyota|Tacoma|TRD Off-Road":       ["3.5L V6 (278 hp)"],
+  "Toyota|Tacoma|Limited":            ["3.5L V6 (278 hp)"],
+  "Toyota|Tacoma|TRD Pro":            ["3.5L V6 (278 hp)"],
+  "Toyota|Tacoma|Trail Edition":      ["3.5L V6 (278 hp)"],
+  "Toyota|4Runner|SR5":               ["4.0L V6 (270 hp)"],
+  "Toyota|4Runner|TRD Sport":         ["4.0L V6 (270 hp)"],
+  "Toyota|4Runner|TRD Off-Road":      ["4.0L V6 (270 hp)"],
+  "Toyota|4Runner|TRD Off-Road Premium": ["4.0L V6 (270 hp)"],
+  "Toyota|4Runner|Limited":           ["4.0L V6 (270 hp)"],
+  "Toyota|4Runner|TRD Pro":           ["4.0L V6 (270 hp)"],
+  "Toyota|4Runner|Venture":           ["4.0L V6 (270 hp)"],
+  "Toyota|Tundra|SR":                 ["3.5L Twin-Turbo V6 (389 hp)","3.5L Twin-Turbo V6 Hybrid (437 hp)"],
+  "Toyota|Tundra|SR5":                ["3.5L Twin-Turbo V6 (389 hp)","3.5L Twin-Turbo V6 Hybrid (437 hp)"],
+  "Toyota|Tundra|Limited":            ["3.5L Twin-Turbo V6 (389 hp)","3.5L Twin-Turbo V6 Hybrid (437 hp)"],
+  "Toyota|Tundra|Platinum":           ["3.5L Twin-Turbo V6 (389 hp)","3.5L Twin-Turbo V6 Hybrid (437 hp)"],
+  "Toyota|Tundra|TRD Pro":            ["3.5L Twin-Turbo V6 Hybrid (437 hp)"],
+  "Toyota|Tundra|Capstone":           ["3.5L Twin-Turbo V6 Hybrid (437 hp)"],
+  "Toyota|RAV4|LE":                   ["2.5L 4-Cyl (203 hp)"],
+  "Toyota|RAV4|XLE":                  ["2.5L 4-Cyl (203 hp)"],
+  "Toyota|RAV4|XLE Premium":          ["2.5L 4-Cyl (203 hp)"],
+  "Toyota|RAV4|TRD Off-Road":         ["2.5L 4-Cyl (203 hp)"],
+  "Toyota|RAV4|Adventure":            ["2.5L 4-Cyl (203 hp)"],
+  "Toyota|RAV4|Limited":              ["2.5L 4-Cyl (203 hp)"],
+  "Toyota|RAV4|Prime SE":             ["2.5L 4-Cyl Plug-In Hybrid (302 hp combined)"],
+  "Toyota|RAV4|Prime XSE":            ["2.5L 4-Cyl Plug-In Hybrid (302 hp combined)"],
+
+  // HONDA
+  "Honda|Civic|LX":                   ["1.5L Turbo 4-Cyl (158 hp)"],
+  "Honda|Civic|Sport":                ["1.5L Turbo 4-Cyl (158 hp)"],
+  "Honda|Civic|EX":                   ["1.5L Turbo 4-Cyl (158 hp)"],
+  "Honda|Civic|EX-L":                 ["1.5L Turbo 4-Cyl (158 hp)"],
+  "Honda|Civic|Touring":              ["1.5L Turbo 4-Cyl (182 hp)"],
+  "Honda|Civic|Si":                   ["1.5L Turbo 4-Cyl (200 hp)"],
+  "Honda|Civic|Type R":               ["2.0L Turbo 4-Cyl (315 hp)"],
+  "Honda|Accord|LX":                  ["1.5L Turbo 4-Cyl (192 hp)"],
+  "Honda|Accord|Sport":               ["1.5L Turbo 4-Cyl (192 hp)","2.0L Turbo 4-Cyl (252 hp)"],
+  "Honda|Accord|EX":                  ["1.5L Turbo 4-Cyl (192 hp)"],
+  "Honda|Accord|EX-L":                ["1.5L Turbo 4-Cyl (192 hp)","2.0L Turbo 4-Cyl (252 hp)"],
+  "Honda|Accord|Touring":             ["2.0L Turbo 4-Cyl (252 hp)"],
+  "Honda|Accord|Hybrid":              ["2.0L 4-Cyl Hybrid (212 hp combined)"],
+  "Honda|CR-V|LX":                    ["1.5L Turbo 4-Cyl (190 hp)"],
+  "Honda|CR-V|EX":                    ["1.5L Turbo 4-Cyl (190 hp)"],
+  "Honda|CR-V|EX-L":                  ["1.5L Turbo 4-Cyl (190 hp)"],
+  "Honda|CR-V|Touring":               ["1.5L Turbo 4-Cyl (190 hp)"],
+  "Honda|CR-V|Hybrid":                ["2.0L 4-Cyl Hybrid (212 hp combined)"],
+  "Honda|Pilot|Sport":                ["3.5L V6 (280 hp)"],
+  "Honda|Pilot|EX-L":                 ["3.5L V6 (280 hp)"],
+  "Honda|Pilot|Touring":              ["3.5L V6 (280 hp)"],
+  "Honda|Pilot|Elite":                ["3.5L V6 (280 hp)"],
+  "Honda|Pilot|TrailSport":           ["3.5L V6 (280 hp)"],
+  "Honda|Pilot|Black Edition":        ["3.5L V6 (280 hp)"],
+
+  // FORD
+  "Ford|F-150|Regular":               ["2.7L EcoBoost V6 (325 hp)","3.5L EcoBoost V6 (400 hp)","5.0L V8 (400 hp)","3.3L V6 (290 hp)"],
+  "Ford|F-150|XL":                    ["2.7L EcoBoost V6 (325 hp)","3.5L EcoBoost V6 (400 hp)","5.0L V8 (400 hp)","3.3L V6 (290 hp)"],
+  "Ford|F-150|XLT":                   ["2.7L EcoBoost V6 (325 hp)","3.5L EcoBoost V6 (400 hp)","5.0L V8 (400 hp)"],
+  "Ford|F-150|Lariat":                ["2.7L EcoBoost V6 (325 hp)","3.5L EcoBoost V6 (400 hp)","5.0L V8 (400 hp)"],
+  "Ford|F-150|King Ranch":            ["3.5L EcoBoost V6 (400 hp)","5.0L V8 (400 hp)"],
+  "Ford|F-150|Platinum":              ["3.5L EcoBoost V6 (400 hp)","5.0L V8 (400 hp)"],
+  "Ford|F-150|Limited":               ["3.5L EcoBoost V6 (450 hp)"],
+  "Ford|F-150|Raptor":                ["3.5L EcoBoost V6 (450 hp)","3.5L EcoBoost V6 High Output (700 hp — Raptor R)"],
+  "Ford|Mustang|EcoBoost":            ["2.3L EcoBoost 4-Cyl (310 hp)"],
+  "Ford|Mustang|GT":                  ["5.0L Coyote V8 (450 hp)"],
+  "Ford|Mustang|Mach 1":              ["5.0L Coyote V8 (480 hp)"],
+  "Ford|Mustang|Shelby GT350":        ["5.2L Flat-Plane V8 (526 hp)"],
+  "Ford|Mustang|Shelby GT500":        ["5.2L Supercharged V8 (760 hp)"],
+  "Ford|Mustang|Dark Horse":          ["5.0L Coyote V8 (500 hp)"],
+  "Ford|Bronco|Base":                 ["2.3L EcoBoost 4-Cyl (300 hp)","2.7L EcoBoost V6 (330 hp)"],
+  "Ford|Bronco|Big Bend":             ["2.3L EcoBoost 4-Cyl (300 hp)","2.7L EcoBoost V6 (330 hp)"],
+  "Ford|Bronco|Black Diamond":        ["2.3L EcoBoost 4-Cyl (300 hp)","2.7L EcoBoost V6 (330 hp)"],
+  "Ford|Bronco|Badlands":             ["2.3L EcoBoost 4-Cyl (300 hp)","2.7L EcoBoost V6 (330 hp)"],
+  "Ford|Bronco|Wildtrak":             ["2.7L EcoBoost V6 (330 hp)"],
+  "Ford|Bronco|Raptor":               ["3.0L EcoBoost V6 (418 hp)"],
+
+  // BMW
+  "BMW|3 Series|330i":                ["2.0L TwinPower Turbo 4-Cyl (255 hp)"],
+  "BMW|3 Series|330xi":               ["2.0L TwinPower Turbo 4-Cyl (255 hp)"],
+  "BMW|3 Series|M340i":               ["3.0L TwinPower Turbo I6 (382 hp)"],
+  "BMW|3 Series|M340xi":              ["3.0L TwinPower Turbo I6 (382 hp)"],
+  "BMW|5 Series|530i":                ["2.0L TwinPower Turbo 4-Cyl (248 hp)"],
+  "BMW|5 Series|530xi":               ["2.0L TwinPower Turbo 4-Cyl (248 hp)"],
+  "BMW|5 Series|540i":                ["3.0L TwinPower Turbo I6 (335 hp)"],
+  "BMW|5 Series|540xi":               ["3.0L TwinPower Turbo I6 (335 hp)"],
+  "BMW|5 Series|M550i":               ["4.4L TwinPower Turbo V8 (523 hp)"],
+  "BMW|X3|sDrive30i":                 ["2.0L TwinPower Turbo 4-Cyl (248 hp)"],
+  "BMW|X3|xDrive30i":                 ["2.0L TwinPower Turbo 4-Cyl (248 hp)"],
+  "BMW|X3|M40i":                      ["3.0L TwinPower Turbo I6 (382 hp)"],
+  "BMW|X5|sDrive40i":                 ["3.0L TwinPower Turbo I6 (335 hp)"],
+  "BMW|X5|xDrive40i":                 ["3.0L TwinPower Turbo I6 (335 hp)"],
+  "BMW|X5|xDrive50e":                 ["3.0L TwinPower Turbo I6 Plug-In Hybrid (483 hp)"],
+  "BMW|X5|M60i":                      ["4.4L TwinPower Turbo V8 (523 hp)"],
+  "BMW|M3|Base":                      ["3.0L TwinPower Turbo I6 (473 hp)"],
+  "BMW|M3|Competition":               ["3.0L TwinPower Turbo I6 (503 hp)"],
+  "BMW|M3|CS":                        ["3.0L TwinPower Turbo I6 (543 hp)"],
+
+  // AUDI
+  "Audi|A4|Premium":                  ["2.0L TFSI Turbo 4-Cyl (201 hp)"],
+  "Audi|A4|Premium Plus":             ["2.0L TFSI Turbo 4-Cyl (201 hp)"],
+  "Audi|A4|Prestige":                 ["2.0L TFSI Turbo 4-Cyl (201 hp)"],
+  "Audi|A4|S4":                       ["3.0L TFSI Supercharged V6 (333 hp)","3.0L Turbo V6 (349 hp)"],
+  "Audi|S4|Premium":                  ["3.0L TFSI Supercharged V6 (333 hp)","3.0L Turbo V6 (349 hp)"],
+  "Audi|S4|Premium Plus":             ["3.0L TFSI Supercharged V6 (333 hp)","3.0L Turbo V6 (349 hp)"],
+  "Audi|S4|Prestige":                 ["3.0L TFSI Supercharged V6 (333 hp)","3.0L Turbo V6 (349 hp)"],
+  "Audi|Q5|Premium":                  ["2.0L TFSI Turbo 4-Cyl (261 hp)"],
+  "Audi|Q5|Premium Plus":             ["2.0L TFSI Turbo 4-Cyl (261 hp)"],
+  "Audi|Q5|Prestige":                 ["2.0L TFSI Turbo 4-Cyl (261 hp)"],
+  "Audi|Q5|SQ5":                      ["3.0L TFSI Supercharged V6 (354 hp)"],
+  "Audi|Q7|Premium":                  ["2.0L TFSI Turbo 4-Cyl (248 hp)","3.0L TFSI Supercharged V6 (333 hp)"],
+  "Audi|Q7|Premium Plus":             ["2.0L TFSI Turbo 4-Cyl (248 hp)","3.0L TFSI Supercharged V6 (333 hp)"],
+  "Audi|Q7|Prestige":                 ["3.0L TFSI Supercharged V6 (333 hp)"],
+
+  // CHEVROLET
+  "Chevrolet|Silverado 1500|WT":      ["2.7L Turbo 4-Cyl (310 hp)","4.3L V6 (285 hp)","5.3L V8 (355 hp)"],
+  "Chevrolet|Silverado 1500|Custom":  ["2.7L Turbo 4-Cyl (310 hp)","4.3L V6 (285 hp)","5.3L V8 (355 hp)"],
+  "Chevrolet|Silverado 1500|LT":      ["2.7L Turbo 4-Cyl (310 hp)","5.3L V8 (355 hp)","3.0L Duramax Diesel I6 (277 hp)"],
+  "Chevrolet|Silverado 1500|RST":     ["2.7L Turbo 4-Cyl (310 hp)","5.3L V8 (355 hp)"],
+  "Chevrolet|Silverado 1500|LTZ":     ["5.3L V8 (355 hp)","6.2L V8 (420 hp)","3.0L Duramax Diesel I6 (277 hp)"],
+  "Chevrolet|Silverado 1500|High Country": ["5.3L V8 (355 hp)","6.2L V8 (420 hp)","3.0L Duramax Diesel I6 (277 hp)"],
+  "Chevrolet|Silverado 1500|Trail Boss": ["5.3L V8 (355 hp)"],
+  "Chevrolet|Silverado 1500|ZR2":     ["6.2L V8 (420 hp)","3.0L Duramax Diesel I6 (305 hp)"],
+  "Chevrolet|Camaro|LS":              ["2.0L Turbo 4-Cyl (275 hp)"],
+  "Chevrolet|Camaro|LT":              ["2.0L Turbo 4-Cyl (275 hp)","3.6L V6 (335 hp)"],
+  "Chevrolet|Camaro|SS":              ["6.2L V8 (455 hp)"],
+  "Chevrolet|Camaro|ZL1":             ["6.2L Supercharged V8 (650 hp)"],
+  "Chevrolet|Corvette|Stingray":      ["6.2L V8 (490 hp — or 495 hp w/ Z51)"],
+  "Chevrolet|Corvette|Grand Sport":   ["6.2L V8 (460 hp)"],
+  "Chevrolet|Corvette|Z06":           ["5.5L Flat-Plane V8 (670 hp)"],
+  "Chevrolet|Corvette|ZR1":           ["5.5L Supercharged V8 (1064 hp)"],
+
+  // DODGE / RAM
+  "Dodge|Challenger|SXT":             ["3.6L Pentastar V6 (303 hp)"],
+  "Dodge|Challenger|GT":              ["3.6L Pentastar V6 (303 hp)"],
+  "Dodge|Challenger|R/T":             ["5.7L HEMI V8 (375 hp)"],
+  "Dodge|Challenger|Scat Pack":       ["6.4L HEMI V8 (485 hp)"],
+  "Dodge|Challenger|Hellcat":         ["6.2L Supercharged HEMI V8 (717 hp)"],
+  "Dodge|Challenger|Demon":           ["6.2L Supercharged HEMI V8 (808 hp / 840 hp w/ 91 octane)"],
+  "Dodge|Charger|SXT":                ["3.6L Pentastar V6 (292 hp)"],
+  "Dodge|Charger|GT":                 ["3.6L Pentastar V6 (300 hp)"],
+  "Dodge|Charger|R/T":                ["5.7L HEMI V8 (370 hp)"],
+  "Dodge|Charger|Scat Pack":          ["6.4L HEMI V8 (485 hp)"],
+  "Dodge|Charger|Hellcat":            ["6.2L Supercharged HEMI V8 (717 hp)"],
+  "Ram|1500|Tradesman":               ["3.6L Pentastar V6 (305 hp)","5.7L HEMI V8 (395 hp)"],
+  "Ram|1500|Big Horn":                ["3.6L Pentastar V6 (305 hp)","5.7L HEMI V8 (395 hp)","3.0L EcoDiesel V6 (260 hp)"],
+  "Ram|1500|Rebel":                   ["5.7L HEMI V8 (395 hp)","3.0L EcoDiesel V6 (260 hp)"],
+  "Ram|1500|Laramie":                 ["5.7L HEMI V8 (395 hp)","3.0L EcoDiesel V6 (260 hp)"],
+  "Ram|1500|Limited":                 ["5.7L HEMI V8 (395 hp)","3.0L EcoDiesel V6 (260 hp)"],
+  "Ram|1500|TRX":                     ["6.2L Supercharged HEMI V8 (702 hp)"],
+
+  // JEEP
+  "Jeep|Wrangler|Sport":              ["3.6L Pentastar V6 (285 hp)","2.0L Turbo 4-Cyl (270 hp)","3.0L EcoDiesel V6 (260 hp)"],
+  "Jeep|Wrangler|Sport S":            ["3.6L Pentastar V6 (285 hp)","2.0L Turbo 4-Cyl (270 hp)"],
+  "Jeep|Wrangler|Sahara":             ["3.6L Pentastar V6 (285 hp)","2.0L Turbo 4-Cyl (270 hp)","3.0L EcoDiesel V6 (260 hp)"],
+  "Jeep|Wrangler|Rubicon":            ["3.6L Pentastar V6 (285 hp)","2.0L Turbo 4-Cyl (270 hp)","3.0L EcoDiesel V6 (260 hp)"],
+  "Jeep|Wrangler|392":                ["6.4L HEMI V8 (470 hp)"],
+  "Jeep|Wrangler|4xe":                ["2.0L Turbo 4-Cyl Plug-In Hybrid (375 hp combined)"],
+  "Jeep|Grand Cherokee|Laredo":       ["3.6L Pentastar V6 (293 hp)"],
+  "Jeep|Grand Cherokee|Limited":      ["3.6L Pentastar V6 (293 hp)","5.7L HEMI V8 (357 hp)"],
+  "Jeep|Grand Cherokee|Trailhawk":    ["3.6L Pentastar V6 (293 hp)","5.7L HEMI V8 (357 hp)"],
+  "Jeep|Grand Cherokee|Overland":     ["3.6L Pentastar V6 (293 hp)","5.7L HEMI V8 (357 hp)"],
+  "Jeep|Grand Cherokee|Summit":       ["5.7L HEMI V8 (357 hp)","6.4L HEMI V8 (475 hp)"],
+  "Jeep|Grand Cherokee|SRT":          ["6.4L HEMI V8 (475 hp)"],
+  "Jeep|Grand Cherokee|Trackhawk":    ["6.2L Supercharged HEMI V8 (707 hp)"],
+
+  // MERCEDES
+  "Mercedes-Benz|C-Class|C 300":      ["2.0L Turbo 4-Cyl (255 hp)"],
+  "Mercedes-Benz|C-Class|C 300 4MATIC": ["2.0L Turbo 4-Cyl (255 hp)"],
+  "Mercedes-Benz|C-Class|AMG C 43":   ["2.0L Turbo 4-Cyl (402 hp)"],
+  "Mercedes-Benz|C-Class|AMG C 63":   ["4.0L Biturbo V8 (469 hp)","2.0L Turbo 4-Cyl Hybrid (469 hp)"],
+  "Mercedes-Benz|GLC|GLC 300":        ["2.0L Turbo 4-Cyl (255 hp)"],
+  "Mercedes-Benz|GLC|GLC 300 4MATIC": ["2.0L Turbo 4-Cyl (255 hp)"],
+  "Mercedes-Benz|GLC|AMG GLC 43":     ["3.0L Turbo I6 (375 hp)"],
+  "Mercedes-Benz|GLE|GLE 350":        ["2.0L Turbo 4-Cyl (255 hp)"],
+  "Mercedes-Benz|GLE|GLE 450":        ["3.0L Turbo I6 (362 hp)"],
+
+  // PORSCHE
+  "Porsche|911|Carrera":              ["3.0L Turbo Flat-6 (379 hp)"],
+  "Porsche|911|Carrera S":            ["3.0L Turbo Flat-6 (443 hp)"],
+  "Porsche|911|Carrera 4":            ["3.0L Turbo Flat-6 (379 hp)"],
+  "Porsche|911|Carrera 4S":           ["3.0L Turbo Flat-6 (443 hp)"],
+  "Porsche|911|GT3":                  ["4.0L Naturally Aspirated Flat-6 (502 hp)"],
+  "Porsche|911|Turbo":                ["3.8L Twin-Turbo Flat-6 (572 hp)"],
+  "Porsche|911|Turbo S":              ["3.8L Twin-Turbo Flat-6 (640 hp)"],
+  "Porsche|Cayenne|Base":             ["3.0L Turbo V6 (348 hp)"],
+  "Porsche|Cayenne|S":                ["2.9L Twin-Turbo V6 (434 hp)"],
+  "Porsche|Cayenne|GTS":              ["4.0L Twin-Turbo V8 (453 hp)"],
+  "Porsche|Cayenne|Turbo":            ["4.0L Twin-Turbo V8 (541 hp)"],
+
+  // GMC
+  "GMC|Sierra 1500|Regular":          ["2.7L Turbo 4-Cyl (310 hp)","4.3L V6 (285 hp)","5.3L V8 (355 hp)"],
+  "GMC|Sierra 1500|SLE":              ["2.7L Turbo 4-Cyl (310 hp)","5.3L V8 (355 hp)"],
+  "GMC|Sierra 1500|SLT":              ["5.3L V8 (355 hp)","6.2L V8 (420 hp)","3.0L Duramax Diesel I6 (277 hp)"],
+  "GMC|Sierra 1500|AT4":              ["5.3L V8 (355 hp)","6.2L V8 (420 hp)","3.0L Duramax Diesel I6 (277 hp)"],
+  "GMC|Sierra 1500|Denali":           ["5.3L V8 (355 hp)","6.2L V8 (420 hp)","3.0L Duramax Diesel I6 (277 hp)"],
+
+  // TESLA
+  "Tesla|Model 3|Standard Range":     ["Single Motor RWD (283 hp)"],
+  "Tesla|Model 3|Long Range":         ["Dual Motor AWD (346 hp)"],
+  "Tesla|Model 3|Long Range AWD":     ["Dual Motor AWD (346 hp)"],
+  "Tesla|Model 3|Performance":        ["Dual Motor AWD (450 hp)"],
+  "Tesla|Model Y|Standard Range":     ["Single Motor RWD (299 hp)"],
+  "Tesla|Model Y|Long Range":         ["Dual Motor AWD (384 hp)"],
+  "Tesla|Model Y|Long Range AWD":     ["Dual Motor AWD (384 hp)"],
+  "Tesla|Model Y|Performance":        ["Dual Motor AWD (456 hp)"],
+  "Tesla|Model S|Long Range":         ["Dual Motor AWD (670 hp)"],
+  "Tesla|Model S|Plaid":              ["Tri Motor AWD (1020 hp)"],
+  "Tesla|Model X|Long Range":         ["Dual Motor AWD (670 hp)"],
+  "Tesla|Model X|Plaid":              ["Tri Motor AWD (1020 hp)"],
+
+  // NISSAN
+  "Nissan|Titan|S":                   ["5.6L Endurance V8 (400 hp)"],
+  "Nissan|Titan|SV":                  ["5.6L Endurance V8 (400 hp)"],
+  "Nissan|Titan|PRO-4X":              ["5.6L Endurance V8 (400 hp)"],
+  "Nissan|Titan|SL":                  ["5.6L Endurance V8 (400 hp)"],
+  "Nissan|370Z|Base":                 ["3.7L V6 (332 hp)"],
+  "Nissan|370Z|Sport":                ["3.7L V6 (332 hp)"],
+  "Nissan|370Z|Touring":              ["3.7L V6 (332 hp)"],
+  "Nissan|370Z|NISMO":                ["3.7L V6 (350 hp)"],
+  "Nissan|Altima|S":                  ["2.5L 4-Cyl (188 hp)"],
+  "Nissan|Altima|SV":                 ["2.5L 4-Cyl (188 hp)","2.0L VC-Turbo 4-Cyl (236 hp)"],
+  "Nissan|Altima|SR":                 ["2.5L 4-Cyl (188 hp)","2.0L VC-Turbo 4-Cyl (236 hp)"],
+  "Nissan|Altima|SL":                 ["2.5L 4-Cyl (188 hp)","2.0L VC-Turbo 4-Cyl (236 hp)"],
+
+  // LEXUS
+  "Lexus|IS|IS 300":                  ["2.0L Turbo 4-Cyl (241 hp)","3.5L V6 (260 hp)"],
+  "Lexus|IS|IS 350":                  ["3.5L V6 (311 hp)"],
+  "Lexus|IS|IS 500":                  ["5.0L V8 (472 hp)"],
+  "Lexus|RX|RX 350":                  ["2.4L Turbo 4-Cyl (275 hp)","3.5L V6 (295 hp)"],
+  "Lexus|RX|RX 350h":                 ["2.5L 4-Cyl Hybrid (246 hp combined)"],
+  "Lexus|RX|RX 500h":                 ["2.4L Turbo 4-Cyl Plug-In Hybrid (366 hp combined)"],
+  "Lexus|GX|GX 460":                  ["4.6L V8 (301 hp)"],
+  "Lexus|LX|LX 570":                  ["5.7L V8 (383 hp)"],
+  "Lexus|LX|LX 600":                  ["3.5L Twin-Turbo V6 (409 hp)"],
+
+  // VOLVO
+  "Volvo|XC90|Momentum":              ["2.0L Turbo 4-Cyl (250 hp)","2.0L Supercharged & Turbo 4-Cyl (316 hp)"],
+  "Volvo|XC90|R-Design":              ["2.0L Supercharged & Turbo 4-Cyl (316 hp)"],
+  "Volvo|XC90|Inscription":           ["2.0L Turbo 4-Cyl (250 hp)","2.0L Supercharged & Turbo 4-Cyl (316 hp)"],
+  "Volvo|XC90|T8 Recharge":           ["2.0L Plug-In Hybrid (400 hp combined)"],
+  "Volvo|XC60|Momentum":              ["2.0L Turbo 4-Cyl (250 hp)"],
+  "Volvo|XC60|R-Design":              ["2.0L Turbo 4-Cyl (250 hp)","2.0L Supercharged & Turbo 4-Cyl (316 hp)"],
+  "Volvo|XC60|Inscription":           ["2.0L Turbo 4-Cyl (250 hp)","2.0L Supercharged & Turbo 4-Cyl (316 hp)"],
+  "Volvo|XC60|T8 Recharge":           ["2.0L Plug-In Hybrid (400 hp combined)"],
+};
+
+function getEngines(make, model, trim) {
+  const key = make + '|' + model + '|' + trim;
+  return ENGINE_DATA[key] || null;
+}
+
+function onTrimChange() {
+  const make  = document.getElementById('makeSelect').value;
+  const model = document.getElementById('modelSelect').value;
+  const trim  = document.getElementById('trimSelect').value;
+  const engEl = document.getElementById('engineSelect');
+
+  engEl.innerHTML = '<option value="">Select Engine (optional)</option>';
+
+  if (!make || !model || !trim) { engEl.disabled = true; return; }
+
+  const engines = getEngines(make, model, trim);
+  if (engines && engines.length > 0) {
+    engEl.disabled = false;
+    engines.forEach(e => {
+      const opt = document.createElement('option');
+      opt.value = e; opt.textContent = e;
+      engEl.appendChild(opt);
+    });
+  } else {
+    // Not in our data — let user type it or leave blank
+    engEl.disabled = false;
+    const opt = document.createElement('option');
+    opt.value = 'unknown'; opt.textContent = 'Not listed — AI will infer from trim';
+    engEl.appendChild(opt);
+  }
+}
+
 function onModelChange() {
   const make = document.getElementById('makeSelect').value;
   const model = document.getElementById('modelSelect').value;
@@ -868,6 +1214,7 @@ async function runReport() {
   const make = document.getElementById('makeSelect').value;
   const model = document.getElementById('modelSelect').value;
   const trim = document.getElementById('trimSelect').value;
+  const engine = document.getElementById('engineSelect').value;
   const mileage = document.getElementById('mileage').value.trim();
   const vin = document.getElementById('vin').value.trim();
 
@@ -885,7 +1232,7 @@ async function runReport() {
     const res = await fetch('/api/report', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ year, make, model, trim, mileage, vin })
+      body: JSON.stringify({ year, make, model, trim, engine: (engine && engine !== 'unknown') ? engine : '', mileage, vin })
     });
 
     const data = await res.json();
