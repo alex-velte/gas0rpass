@@ -156,16 +156,32 @@
     .run-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
     /* LOADING */
-    #loading { display: none; max-width: 700px; margin: 0 auto; padding: 60px 24px; text-align: center; }
-    .spinner { width: 48px; height: 48px; border: 3px solid var(--border); border-top-color: var(--gas); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 24px; }
+    #loading { display: none; max-width: 620px; margin: 0 auto; padding: 60px 24px 80px; text-align: center; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-label { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 0.05em; margin-bottom: 8px; }
-    .loading-sub { color: var(--muted); font-size: 0.88rem; }
-    .loading-steps { margin-top: 28px; display: flex; flex-direction: column; gap: 10px; text-align: left; max-width: 340px; margin-left: auto; margin-right: auto; }
-    .loading-step { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--muted); opacity: 0; transform: translateY(6px); transition: all 0.4s ease; }
-    .loading-step.active { opacity: 1; transform: translateY(0); color: var(--text); }
-    .loading-step .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: background 0.3s; }
-    .loading-step.active .dot { background: var(--gas); }
+    @keyframes sourcePulse {
+      0%, 100% { border-color: var(--gas); box-shadow: 0 0 0 0 rgba(200,245,96,0); }
+      50% { border-color: var(--gas); box-shadow: 0 0 0 4px rgba(200,245,96,0.08); }
+    }
+    .loading-vehicle-label { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 0.14em; color: var(--muted); margin-bottom: 4px; }
+    .loading-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: 0.04em; margin-bottom: 28px; line-height: 1; }
+    .loading-title span { color: var(--gas); }
+    .progress-track { width: 100%; height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; margin-bottom: 8px; }
+    .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--gas) 0%, #a8e040 100%); border-radius: 99px; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
+    .progress-pct { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--muted); text-align: right; margin-bottom: 24px; }
+    .source-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; text-align: left; }
+    .source-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 13px 15px; display: flex; align-items: center; gap: 11px; opacity: 0.3; transition: opacity 0.5s ease, border-color 0.4s ease; }
+    .source-card.searching { opacity: 1; border-color: var(--gas); animation: sourcePulse 1.4s ease-in-out infinite; }
+    .source-card.done { opacity: 1; border-color: #3a5a1a; animation: none; }
+    .source-icon { font-size: 1.2rem; flex-shrink: 0; width: 26px; text-align: center; }
+    .source-info { flex: 1; min-width: 0; }
+    .source-name { font-size: 0.82rem; font-weight: 600; color: var(--text); }
+    .source-status { font-size: 0.7rem; color: var(--muted); margin-top: 1px; }
+    .source-card.searching .source-status { color: var(--gas); }
+    .source-card.done .source-status { color: #7ab84a; }
+    .source-check { font-size: 0.85rem; flex-shrink: 0; opacity: 0; transition: opacity 0.3s; }
+    .source-card.done .source-check { opacity: 1; color: var(--gas); }
+    .loading-action { font-size: 0.85rem; color: var(--muted); min-height: 20px; }
+    .loading-action strong { color: var(--text); font-weight: 500; }
 
     /* REPORT */
     #report { display: none; max-width: 880px; margin: 0 auto; padding: 40px 24px 80px; }
@@ -384,16 +400,66 @@
 
 <!-- LOADING -->
 <div id="loading">
-  <div class="spinner"></div>
-  <div class="loading-label">Pulling Your Report</div>
-  <div class="loading-sub">Searching Reddit, Car and Driver, and more...</div>
-  <div class="loading-steps">
-    <div class="loading-step" id="step1"><div class="dot"></div>Searching Reddit communities</div>
-    <div class="loading-step" id="step2"><div class="dot"></div>Checking reliability data</div>
-    <div class="loading-step" id="step3"><div class="dot"></div>Analyzing known issues & mileage</div>
-    <div class="loading-step" id="step4"><div class="dot"></div>Calculating fair market value</div>
-    <div class="loading-step" id="step5"><div class="dot"></div>Generating your report</div>
+  <div class="loading-vehicle-label" id="loadingVehicleLabel">RESEARCHING</div>
+  <div class="loading-title">Pulling Your <span>Report</span></div>
+
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
   </div>
+  <div class="progress-pct"><span id="progressPct">0</span>% complete</div>
+
+  <div class="source-grid">
+    <div class="source-card" id="src-reddit">
+      <div class="source-icon">🗣️</div>
+      <div class="source-info">
+        <div class="source-name">Reddit Forums</div>
+        <div class="source-status" id="src-reddit-status">Waiting...</div>
+      </div>
+      <div class="source-check">✓</div>
+    </div>
+    <div class="source-card" id="src-cardriver">
+      <div class="source-icon">🏎️</div>
+      <div class="source-info">
+        <div class="source-name">Car and Driver</div>
+        <div class="source-status" id="src-cardriver-status">Waiting...</div>
+      </div>
+      <div class="source-check">✓</div>
+    </div>
+    <div class="source-card" id="src-consumer">
+      <div class="source-icon">📊</div>
+      <div class="source-info">
+        <div class="source-name">Consumer Reports</div>
+        <div class="source-status" id="src-consumer-status">Waiting...</div>
+      </div>
+      <div class="source-check">✓</div>
+    </div>
+    <div class="source-card" id="src-edmunds">
+      <div class="source-icon">💰</div>
+      <div class="source-info">
+        <div class="source-name">Edmunds / Market Data</div>
+        <div class="source-status" id="src-edmunds-status">Waiting...</div>
+      </div>
+      <div class="source-check">✓</div>
+    </div>
+    <div class="source-card" id="src-forums">
+      <div class="source-icon">🔧</div>
+      <div class="source-info">
+        <div class="source-name">Owner Forums</div>
+        <div class="source-status" id="src-forums-status">Waiting...</div>
+      </div>
+      <div class="source-check">✓</div>
+    </div>
+    <div class="source-card" id="src-ai">
+      <div class="source-icon">⚡</div>
+      <div class="source-info">
+        <div class="source-name">AI Analysis</div>
+        <div class="source-status" id="src-ai-status">Waiting...</div>
+      </div>
+      <div class="source-check">✓</div>
+    </div>
+  </div>
+
+  <div class="loading-action" id="loadingAction">Starting deep research...</div>
 </div>
 
 <!-- ERROR -->
@@ -812,7 +878,8 @@ async function runReport() {
   }
 
   showSection('loading');
-  animateLoadingSteps();
+  const vehicleLabel = [year, make, model, trim].filter(Boolean).join(' ');
+  animateLoadingSteps(vehicleLabel);
 
   try {
     const res = await fetch('/api/report', {
@@ -835,10 +902,65 @@ async function runReport() {
   }
 }
 
-function animateLoadingSteps() {
-  ['step1','step2','step3','step4','step5'].forEach((id, i) => {
-    document.getElementById(id).classList.remove('active');
-    setTimeout(() => document.getElementById(id).classList.add('active'), i * 1200);
+function animateLoadingSteps(vehicleLabel) {
+  // Update vehicle label
+  if (vehicleLabel) {
+    document.getElementById('loadingVehicleLabel').textContent = 'RESEARCHING: ' + vehicleLabel.toUpperCase();
+  }
+
+  // Reset all sources
+  const sources = ['reddit','cardriver','consumer','edmunds','forums','ai'];
+  sources.forEach(s => {
+    const el = document.getElementById('src-' + s);
+    el.classList.remove('searching','done');
+    document.getElementById('src-' + s + '-status').textContent = 'Waiting...';
+  });
+
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('progressPct').textContent = '0';
+  document.getElementById('loadingAction').innerHTML = 'Starting deep research...';
+
+  const steps = [
+    { src: 'reddit',    status: 'Scanning threads...',        action: 'Reading <strong>r/cars</strong>, <strong>r/MechanicAdvice</strong>, and model-specific subreddits...', pct: 8 },
+    { src: 'reddit',    status: 'Done ✓',                     action: 'Found owner experiences and known issues from Reddit communities.', pct: 22, done: 'reddit' },
+    { src: 'cardriver', status: 'Pulling review data...',      action: 'Checking <strong>Car and Driver</strong> expert reviews and long-term test data...', pct: 30 },
+    { src: 'cardriver', status: 'Done ✓',                     action: 'Expert review data pulled.', pct: 40, done: 'cardriver' },
+    { src: 'consumer',  status: 'Checking reliability...',     action: 'Pulling <strong>Consumer Reports</strong> reliability ratings and owner satisfaction scores...', pct: 48 },
+    { src: 'consumer',  status: 'Done ✓',                     action: 'Reliability data collected.', pct: 56, done: 'consumer' },
+    { src: 'edmunds',   status: 'Checking market prices...',   action: 'Analyzing <strong>market pricing</strong> and fair value ranges for this vehicle...', pct: 63 },
+    { src: 'edmunds',   status: 'Done ✓',                     action: 'Fair market range calculated.', pct: 70, done: 'edmunds' },
+    { src: 'forums',    status: 'Reading owner reports...',    action: 'Scanning <strong>owner forums</strong> for real-world maintenance and failure patterns...', pct: 76 },
+    { src: 'forums',    status: 'Done ✓',                     action: 'Owner feedback analyzed.', pct: 82, done: 'forums' },
+    { src: 'ai',        status: 'Synthesizing report...',      action: '<strong>AI is now synthesizing</strong> all sources into your Gas or Pass report...', pct: 90 },
+    { src: 'ai',        status: 'Done ✓',                     action: 'Report complete. Loading your results...', pct: 99, done: 'ai' },
+  ];
+
+  // Variable timing — some steps faster, some slower
+  const delays = [0, 2200, 3000, 4400, 5200, 6800, 7600, 9200, 10000, 11800, 12600, 16000];
+
+  steps.forEach((step, i) => {
+    setTimeout(() => {
+      // Update progress
+      document.getElementById('progressFill').style.width = step.pct + '%';
+      document.getElementById('progressPct').textContent = step.pct;
+
+      // Update action text
+      document.getElementById('loadingAction').innerHTML = step.action;
+
+      // Update source card state
+      const card = document.getElementById('src-' + step.src);
+      const statusEl = document.getElementById('src-' + step.src + '-status');
+
+      if (step.done) {
+        card.classList.remove('searching');
+        card.classList.add('done');
+        statusEl.textContent = 'Done ✓';
+      } else {
+        // Mark previous as searching if not already done
+        card.classList.add('searching');
+        statusEl.textContent = step.status;
+      }
+    }, delays[i]);
   });
 }
 
