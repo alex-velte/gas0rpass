@@ -13,8 +13,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.post('/api/report', async (req, res) => {
   const { year, make, model, trim, mileage, vin } = req.body;
 
-  if (!year || !make || !model) {
-    return res.status(400).json({ error: 'Year, make, and model are required.' });
+  if (!vin && (!year || !make || !model)) {
+    return res.status(400).json({ error: 'Please provide a VIN or a Year, Make, and Model.' });
   }
 
   try {
@@ -30,11 +30,18 @@ app.post('/api/report', async (req, res) => {
 function buildPrompt(year, make, model, trim, mileage, vin) {
   const trimInfo = trim ? ` ${trim} trim` : '';
   const mileageInfo = mileage ? ` with ${Number(mileage).toLocaleString()} miles` : '';
-  const vinInfo = vin ? ` (VIN: ${vin})` : '';
+  const vehicleDesc = vin && (!year || !make || !model)
+    ? `VIN: ${vin}`
+    : `${year} ${make} ${model}${trimInfo}${mileageInfo}${vin ? ` (VIN: ${vin})` : ''}`;
+
+  const vehicleLabel = vin && (!year || !make || !model)
+    ? vin
+    : `${year} ${make} ${model}${trimInfo}`;
 
   return `You are an expert automotive analyst — think of yourself as a knowledgeable car-enthusiast friend who gives honest, balanced advice. You have deep knowledge of reliability, common problems, ownership costs, and market values, drawing from Reddit communities (r/cars, r/MechanicAdvice, r/whatcarshouldIbuy, and model-specific subreddits), Car and Driver, Consumer Reports, and automotive forums.
 
-A user wants a "Gas or Pass" report on a ${year} ${make} ${model}${trimInfo}${mileageInfo}${vinInfo}.
+A user wants a "Gas or Pass" report on: ${vehicleDesc}.
+${vin && (!year || !make || !model) ? 'The user only provided a VIN. First decode the VIN to determine the year, make, model, trim, and engine, then generate the full report based on that vehicle.' : ''}
 
 CRITICAL SCORING PHILOSOPHY:
 - Be a realistic, balanced friend — not an insurance company. High mileage on a reliable brand (Toyota, Honda, Lexus, Subaru H6) does NOT mean "Pass." A well-maintained Toyota with 250k miles is often a better buy than a poorly maintained German car with 60k miles.
@@ -47,7 +54,7 @@ ${vin ? `\nVIN PROVIDED: ${vin} — use this to confirm year/make/model/trim/eng
 Generate a comprehensive vehicle report in the following JSON format ONLY. No text outside the JSON.
 
 {
-  "vehicle": "${year} ${make} ${model}${trimInfo}",
+  "vehicle": "${vehicleLabel}",
   "mileage": "${mileage || 'Not specified'}",
   "verdict": "GAS" or "HARD PASS" or "GAS/PASS",
   "verdictReason": "One punchy honest sentence like a friend would say",
