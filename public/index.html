@@ -111,7 +111,9 @@
       color: var(--muted);
       pointer-events: none;
       font-size: 0.9rem;
+      z-index: 0;
     }
+    .select-wrap select { position: relative; z-index: 1; cursor: pointer; }
 
     .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
     .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
@@ -335,38 +337,30 @@
       <div class="form-row-3">
         <div class="form-group">
           <label>Year</label>
-          <div class="select-wrap">
-            <select id="yearSelect" onchange="onYearChange()">
-              <option value="">Select Year</option>
-            </select>
-          </div>
+          <select id="yearSelect" onchange="onYearChange()">
+            <option value="">Select Year</option>
+          </select>
         </div>
         <div class="form-group">
           <label>Make</label>
-          <div class="select-wrap">
-            <select id="makeSelect" onchange="onMakeChange()" disabled>
-              <option value="">Select Make</option>
-            </select>
-          </div>
+          <select id="makeSelect" onchange="onMakeChange()" disabled>
+            <option value="">Select Make</option>
+          </select>
         </div>
         <div class="form-group">
           <label>Model</label>
-          <div class="select-wrap">
-            <select id="modelSelect" onchange="onModelChange()" disabled>
-              <option value="">Select Model</option>
-            </select>
-          </div>
+          <select id="modelSelect" onchange="onModelChange()" disabled>
+            <option value="">Select Model</option>
+          </select>
         </div>
       </div>
 
       <div class="form-row-2">
         <div class="form-group">
           <label>Trim Level <span style="color:var(--muted);font-weight:300">(optional)</span></label>
-          <div class="select-wrap">
-            <select id="trimSelect" disabled>
-              <option value="">Select Trim</option>
-            </select>
-          </div>
+          <select id="trimSelect" disabled>
+            <option value="">Select Trim</option>
+          </select>
         </div>
         <div class="form-group">
           <label>Mileage <span style="color:var(--muted);font-weight:300">(optional)</span></label>
