@@ -3,24 +3,25 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Your Digital Mechanic — Know Before You Buy</title>
+  <title>Drive Counselor — Confident Decisions. Every Drive.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     :root {
-      --bg:        #0D0D0D;
-      --surface:   #161616;
-      --surface2:  #2C3142;
-      --border:    #2a2d3a;
-      --text:      #F8F9FB;
-      --muted:     #7a7e8e;
-      --orange:    #E85D04;
-      --orange-ho: #FF7A1A;
-      --orange-dk: #C44D00;
-      --good:      #22C55E;
-      --caution:   #FBBF24;
-      --avoid:     #EF4444;
+      --bg:        #2C2416;
+      --surface:   #3A3020;
+      --surface2:  #4A3E2E;
+      --border:    #5a4e3a;
+      --text:      #FAF7F2;
+      --muted:     #a09070;
+      --gold:      #C49448;
+      --gold-ho:   #E8B86D;
+      --gold-dk:   #9a7030;
+      --parchment: #FAF7F2;
+      --good:      #4CAF72;
+      --caution:   #D4A843;
+      --avoid:     #C85A5A;
       --radius:    8px;
     }
 
@@ -29,14 +30,14 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Barlow', sans-serif;
       min-height: 100vh;
     }
 
     /* ── HEADER ── */
     header {
       border-bottom: 1px solid var(--border);
-      padding: 16px 32px;
+      padding: 14px 32px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -46,520 +47,328 @@
       z-index: 100;
     }
 
-    .logo { display: flex; align-items: center; gap: 12px; cursor: pointer; text-decoration: none; }
+    .logo { display:flex; align-items:center; gap:12px; cursor:pointer; text-decoration:none; }
 
     .logo-mark {
-      width: 40px; height: 40px;
+      width: 38px; height: 38px;
       background: var(--text);
       border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
+      display: flex; align-items:center; justify-content:center;
       flex-shrink: 0;
     }
-
     .logo-mark span {
       font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 800;
-      font-size: 1.1rem;
-      color: var(--bg);
-      letter-spacing: -0.02em;
+      font-weight: 800; font-size: 1rem;
+      color: var(--bg); letter-spacing: -0.02em;
     }
 
-    .logo-text { line-height: 1; }
-    .logo-text .your { font-size: 0.6rem; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; display: block; }
-    .logo-text .digital { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.15rem; letter-spacing: 0.02em; color: var(--text); display: block; line-height: 1; }
-    .logo-text .mechanic { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 1.15rem; letter-spacing: 0.02em; color: var(--orange); display: block; line-height: 1; }
+    .logo-text { line-height:1; }
+    .logo-text .drive    { font-size:0.6rem; font-weight:500; color:var(--muted); text-transform:uppercase; letter-spacing:0.14em; display:block; }
+    .logo-text .counsel  { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1.2rem; letter-spacing:0.02em; color:var(--gold); display:block; line-height:1; }
 
-    nav { display: flex; align-items: center; gap: 8px; }
+    nav { display:flex; align-items:center; gap:6px; }
+    .nav-link { font-size:0.82rem; font-weight:500; color:var(--muted); padding:8px 13px; border-radius:var(--radius); cursor:pointer; background:none; border:none; transition:color .2s,background .2s; font-family:'Barlow',sans-serif; }
+    .nav-link:hover { color:var(--text); background:rgba(255,255,255,0.06); }
+    .nav-btn { font-size:0.82rem; font-weight:600; color:var(--bg); background:var(--gold); border:none; padding:8px 16px; border-radius:var(--radius); cursor:pointer; transition:background .2s; font-family:'Barlow',sans-serif; }
+    .nav-btn:hover { background:var(--gold-ho); }
 
-    .nav-link {
-      font-size: 0.82rem;
-      font-weight: 500;
-      color: var(--muted);
-      text-decoration: none;
-      padding: 8px 14px;
-      border-radius: var(--radius);
-      transition: color 0.2s, background 0.2s;
-      cursor: pointer;
-      background: none;
-      border: none;
-    }
-    .nav-link:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-
-    .nav-btn {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--bg);
-      background: var(--orange);
-      border: none;
-      padding: 8px 16px;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .nav-btn:hover { background: var(--orange-ho); }
-
-    /* ── SECTIONS ── */
-    .page-section { display: none; }
-    .page-section.active { display: block; }
+    /* ── PAGE SECTIONS ── */
+    .page-section { display:none; }
+    .page-section.active { display:block; }
 
     /* ── HERO ── */
-    .hero {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 80px 24px 60px;
-      text-align: center;
-    }
-
-    .hero-eyebrow {
-      font-size: 0.72rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: var(--orange);
-      margin-bottom: 16px;
-    }
-
-    .hero h1 {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 800;
-      font-size: clamp(3.2rem, 9vw, 6rem);
-      line-height: 0.92;
-      letter-spacing: 0.01em;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-    }
-
-    .hero h1 em { font-style: normal; color: var(--orange); }
-
-    .hero p {
-      color: var(--muted);
-      font-size: 1rem;
-      line-height: 1.65;
-      max-width: 500px;
-      margin: 0 auto 40px;
-    }
+    .hero { max-width:720px; margin:0 auto; padding:80px 24px 56px; text-align:center; }
+    .hero-eyebrow { font-family:'Courier Prime',monospace; font-size:0.72rem; color:var(--gold); letter-spacing:0.16em; text-transform:uppercase; margin-bottom:18px; }
+    .hero h1 { font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:clamp(3.4rem,9vw,6.2rem); line-height:0.9; letter-spacing:0.01em; text-transform:uppercase; margin-bottom:22px; }
+    .hero h1 em { font-style:normal; color:var(--gold); }
+    .hero p { color:var(--muted); font-size:1rem; line-height:1.7; max-width:480px; margin:0 auto 40px; font-weight:400; }
 
     /* ── SEARCH CARD ── */
-    .search-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 28px;
-      text-align: left;
+    .search-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:28px; text-align:left; }
+    .search-card label { display:block; font-family:'Courier Prime',monospace; font-size:0.65rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:6px; }
+    .search-card input, .search-card select {
+      width:100%; background:var(--bg); border:1px solid var(--border);
+      border-radius:var(--radius); color:var(--text);
+      font-family:'Barlow',sans-serif; font-size:0.95rem;
+      padding:11px 14px; outline:none; transition:border-color .2s;
+      -webkit-appearance:none; appearance:none; cursor:pointer;
     }
+    .search-card input:focus, .search-card select:focus { border-color:var(--gold); }
+    .search-card select:disabled { opacity:0.3; cursor:not-allowed; }
+    .search-card select option { background:var(--surface2); }
+    .form-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:12px; }
+    .form-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+    .form-grid-1 { margin-bottom:12px; }
+    .form-group { display:flex; flex-direction:column; }
+    .opt-label { color:var(--muted); font-weight:400; font-size:0.75em; text-transform:none; letter-spacing:0; font-family:'Barlow',sans-serif; }
+    .divider-or { display:flex; align-items:center; gap:12px; color:var(--muted); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; margin:8px 0 12px; font-family:'Courier Prime',monospace; }
+    .divider-or::before, .divider-or::after { content:''; flex:1; height:1px; background:var(--border); }
+    .run-btn { width:100%; background:var(--gold); color:var(--bg); border:none; border-radius:var(--radius); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1.25rem; letter-spacing:0.1em; text-transform:uppercase; padding:15px; cursor:pointer; transition:background .2s,transform .1s; margin-top:8px; }
+    .run-btn:hover { background:var(--gold-ho); transform:translateY(-1px); }
+    .run-btn:active { transform:translateY(0); }
 
-    .search-card label {
-      display: block;
-      font-size: 0.68rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-
-    .search-card input,
-    .search-card select {
-      width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.95rem;
-      padding: 11px 14px;
-      outline: none;
-      transition: border-color 0.2s;
-      -webkit-appearance: none;
-      appearance: none;
-      cursor: pointer;
-    }
-
-    .search-card input:focus,
-    .search-card select:focus { border-color: var(--orange); }
-    .search-card select:disabled { opacity: 0.35; cursor: not-allowed; }
-    .search-card select option { background: #1a1a1a; }
-
-    .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-    .form-grid-1 { margin-bottom: 12px; }
-    .form-group { display: flex; flex-direction: column; }
-
-    .divider-or {
-      display: flex; align-items: center; gap: 12px;
-      color: var(--muted); font-size: 0.7rem;
-      text-transform: uppercase; letter-spacing: 0.1em;
-      margin: 8px 0 12px;
-    }
-    .divider-or::before, .divider-or::after { content:''; flex:1; height:1px; background: var(--border); }
-
-    .run-btn {
-      width: 100%;
-      background: var(--orange);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius);
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 700;
-      font-size: 1.3rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      padding: 15px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-      margin-top: 8px;
-    }
-    .run-btn:hover { background: var(--orange-ho); transform: translateY(-1px); }
-    .run-btn:active { transform: translateY(0); }
-
-    /* Trust strip */
-    .trust-strip {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 24px;
-      margin-top: 32px;
-      flex-wrap: wrap;
-    }
-    .trust-item {
-      display: flex; align-items: center; gap: 7px;
-      font-size: 0.78rem; color: var(--muted);
-    }
-    .trust-item span { color: var(--orange); font-size: 0.9rem; }
+    .trust-strip { display:flex; align-items:center; justify-content:center; gap:24px; margin-top:28px; flex-wrap:wrap; }
+    .trust-item { display:flex; align-items:center; gap:7px; font-size:0.76rem; color:var(--muted); font-family:'Courier Prime',monospace; }
+    .trust-item span { color:var(--gold); }
 
     /* ── LOADING ── */
-    #loading { max-width: 580px; margin: 0 auto; padding: 70px 24px 80px; text-align: center; }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-    @keyframes srcPulse {
-      0%,100% { border-color: var(--orange); box-shadow: 0 0 0 0 rgba(232,93,4,0); }
-      50% { box-shadow: 0 0 0 4px rgba(232,93,4,0.1); }
-    }
-
-    .loading-eyebrow { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--orange); margin-bottom: 6px; }
-    .loading-title { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 2.2rem; text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 28px; }
-
-    .progress-track { width:100%; height:5px; background:var(--border); border-radius:99px; overflow:hidden; margin-bottom:7px; }
-    .progress-fill { height:100%; width:0%; background: linear-gradient(90deg, var(--orange-dk), var(--orange-ho)); border-radius:99px; transition: width 1s cubic-bezier(.4,0,.2,1); }
-    .progress-pct { font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--muted); text-align:right; margin-bottom:22px; }
-
-    .src-grid { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-bottom:22px; text-align:left; }
-    .src-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:12px 14px; display:flex; align-items:center; gap:10px; opacity:0.28; transition:opacity .5s,border-color .4s; }
-    .src-card.searching { opacity:1; border-color:var(--orange); animation:srcPulse 1.4s ease-in-out infinite; }
-    .src-card.done { opacity:1; border-color:#1a4a1a; animation:none; }
-    .src-icon { font-size:1.1rem; flex-shrink:0; width:24px; text-align:center; }
+    #loading { display:none; max-width:560px; margin:0 auto; padding:70px 24px 80px; text-align:center; }
+    @keyframes srcPulse { 0%,100%{border-color:var(--gold);box-shadow:0 0 0 0 rgba(196,148,72,0)} 50%{box-shadow:0 0 0 5px rgba(196,148,72,0.1)} }
+    .loading-eyebrow { font-family:'Courier Prime',monospace; font-size:0.68rem; color:var(--gold); letter-spacing:0.14em; text-transform:uppercase; margin-bottom:6px; }
+    .loading-title { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:2.1rem; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:26px; }
+    .progress-track { width:100%; height:4px; background:var(--border); border-radius:99px; overflow:hidden; margin-bottom:7px; }
+    .progress-fill { height:100%; width:0%; background:linear-gradient(90deg,var(--gold-dk),var(--gold-ho)); border-radius:99px; transition:width 1s cubic-bezier(.4,0,.2,1); }
+    .progress-pct { font-family:'Courier Prime',monospace; font-size:0.7rem; color:var(--muted); text-align:right; margin-bottom:22px; }
+    .src-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:22px; text-align:left; }
+    .src-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:11px 13px; display:flex; align-items:center; gap:10px; opacity:0.25; transition:opacity .5s,border-color .4s; }
+    .src-card.searching { opacity:1; border-color:var(--gold); animation:srcPulse 1.4s ease-in-out infinite; }
+    .src-card.done { opacity:1; border-color:var(--good); animation:none; }
+    .src-icon { font-size:1rem; flex-shrink:0; width:22px; text-align:center; }
     .src-info { flex:1; min-width:0; }
-    .src-name { font-size:0.8rem; font-weight:600; color:var(--text); }
-    .src-status { font-size:0.68rem; color:var(--muted); margin-top:1px; }
-    .src-card.searching .src-status { color:var(--orange); }
+    .src-name { font-size:0.78rem; font-weight:600; color:var(--text); }
+    .src-status { font-size:0.66rem; color:var(--muted); margin-top:1px; }
+    .src-card.searching .src-status { color:var(--gold); }
     .src-card.done .src-status { color:var(--good); }
-    .src-check { font-size:0.8rem; flex-shrink:0; opacity:0; transition:opacity .3s; color:var(--good); }
+    .src-check { font-size:0.78rem; flex-shrink:0; opacity:0; transition:opacity .3s; color:var(--good); }
     .src-card.done .src-check { opacity:1; }
-
-    .loading-action { font-size:0.83rem; color:var(--muted); min-height:20px; }
+    .loading-action { font-size:0.82rem; color:var(--muted); min-height:20px; line-height:1.5; }
     .loading-action strong { color:var(--text); font-weight:500; }
 
     /* ── REPORT ── */
-    #report-section { max-width: 900px; margin: 0 auto; padding: 36px 24px 100px; }
+    #report-section { max-width:880px; margin:0 auto; padding:36px 24px 100px; }
+    .report-actions { display:flex; gap:10px; margin-bottom:22px; flex-wrap:wrap; }
+    .btn-ghost { background:transparent; border:1px solid var(--border); color:var(--text); border-radius:var(--radius); font-family:'Barlow',sans-serif; font-size:0.82rem; font-weight:500; padding:9px 16px; cursor:pointer; transition:border-color .2s,color .2s; display:flex; align-items:center; gap:7px; }
+    .btn-ghost:hover { border-color:var(--gold); color:var(--gold); }
 
-    .report-actions { display:flex; gap:10px; margin-bottom:24px; flex-wrap:wrap; }
+    /* VERDICT */
+    .verdict-banner { border-radius:12px; padding:28px 32px; margin-bottom:18px; display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+    .verdict-banner.excellent { background:linear-gradient(135deg,#0d2016,#0f2a1a); border:1px solid #1e5030; }
+    .verdict-banner.good      { background:linear-gradient(135deg,#1a2010,#1e2a12); border:1px solid #3a5020; }
+    .verdict-banner.caution   { background:linear-gradient(135deg,#241c08,#2a2008); border:1px solid #5a4010; }
+    .verdict-banner.risky     { background:linear-gradient(135deg,#28140a,#2e180a); border:1px solid #5a2c10; }
+    .verdict-banner.walkaway  { background:linear-gradient(135deg,#280a0a,#2e0e0e); border:1px solid #5a1414; }
 
-    .btn-ghost {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: var(--radius);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.82rem;
-      font-weight: 500;
-      padding: 9px 16px;
-      cursor: pointer;
-      transition: border-color .2s, color .2s;
-      display: flex; align-items: center; gap: 7px;
-    }
-    .btn-ghost:hover { border-color: var(--orange); color: var(--orange); }
+    .verdict-tag { font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:3.2rem; line-height:1; letter-spacing:0.02em; text-transform:uppercase; }
+    .verdict-banner.excellent .verdict-tag { color:var(--good); }
+    .verdict-banner.good      .verdict-tag { color:#7ac95a; }
+    .verdict-banner.caution   .verdict-tag { color:var(--caution); }
+    .verdict-banner.risky     .verdict-tag { color:#d4824a; }
+    .verdict-banner.walkaway  .verdict-tag { color:var(--avoid); }
 
-    /* VERDICT BANNER */
-    .verdict-banner {
-      border-radius: 12px;
-      padding: 30px 34px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    .verdict-banner.gas     { background: linear-gradient(135deg,#0d1f07,#122809); border: 1px solid #2a5a14; }
-    .verdict-banner.caution { background: linear-gradient(135deg,#1f1600,#221900); border: 1px solid #5a3d00; }
-    .verdict-banner.avoid   { background: linear-gradient(135deg,#1f0707,#220a0a); border: 1px solid #5a1414; }
-
-    .verdict-tag {
-      font-family: 'Barlow Condensed', sans-serif;
-      font-weight: 800;
-      font-size: 3.6rem;
-      line-height: 1;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-    }
-    .verdict-banner.gas     .verdict-tag { color: var(--good); }
-    .verdict-banner.caution .verdict-tag { color: var(--caution); }
-    .verdict-banner.avoid   .verdict-tag { color: var(--avoid); }
-
-    .verdict-vehicle { font-size:0.88rem; color:var(--muted); margin-top:4px; font-family:'DM Mono',monospace; }
-    .verdict-reason  { font-size:1rem; line-height:1.5; max-width:380px; font-weight:500; margin-top:12px; }
+    .verdict-vehicle { font-family:'Courier Prime',monospace; font-size:0.82rem; color:var(--muted); margin-top:5px; }
+    .verdict-reason  { font-size:0.97rem; line-height:1.6; max-width:380px; font-weight:400; margin-top:12px; color:var(--text); }
 
     /* Score circle */
-    .score-circle-wrap { display:flex; flex-direction:column; align-items:center; gap:5px; flex-shrink:0; }
-    .score-circle { position:relative; width:108px; height:108px; }
-    .score-circle svg { transform:rotate(-90deg); width:108px; height:108px; }
-    .score-circle-bg { fill:none; stroke:rgba(255,255,255,0.07); stroke-width:7; }
-    .score-circle-fill { fill:none; stroke-width:7; stroke-linecap:round; transition:stroke-dashoffset 1s ease; }
-    .score-circle-num { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:2rem; line-height:1; }
-    .score-circle-num .denom { font-size:0.85rem; color:var(--muted); font-weight:600; }
-    .score-circle-label { font-size:0.65rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); }
+    .score-wrap { display:flex; flex-direction:column; align-items:center; gap:5px; flex-shrink:0; }
+    .score-ring { position:relative; width:106px; height:106px; }
+    .score-ring svg { transform:rotate(-90deg); width:106px; height:106px; }
+    .ring-bg   { fill:none; stroke:rgba(255,255,255,0.08); stroke-width:7; }
+    .ring-fill { fill:none; stroke-width:7; stroke-linecap:round; transition:stroke-dashoffset 1s ease; }
+    .score-num { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1.9rem; line-height:1; }
+    .score-num .denom { font-size:0.8rem; color:var(--muted); font-weight:600; }
+    .score-lbl { font-family:'Courier Prime',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); }
 
     /* Score legend */
-    .score-legend {
-      display: flex; gap: 16px; flex-wrap: wrap;
-      margin-bottom: 20px;
-      padding: 12px 16px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      font-size: 0.75rem; color: var(--muted);
-    }
-    .legend-item { display:flex; align-items:center; gap:6px; }
-    .legend-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .score-legend { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:18px; padding:11px 15px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); font-family:'Courier Prime',monospace; font-size:0.7rem; color:var(--muted); }
+    .leg-item { display:flex; align-items:center; gap:6px; }
+    .leg-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
 
-    /* Sections */
-    .card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:22px 26px; margin-bottom:16px; }
-    .card-title {
-      font-family:'Barlow Condensed',sans-serif;
-      font-weight:700; font-size:1.1rem;
-      text-transform:uppercase; letter-spacing:0.08em;
-      margin-bottom:16px; color:var(--text);
-      display:flex; align-items:center; gap:8px;
-    }
-    .card-title::before { content:'//'; color:var(--orange); font-size:0.85rem; }
+    /* Cards */
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:22px 26px; margin-bottom:14px; }
+    .card-title { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:1rem; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:16px; color:var(--gold); display:flex; align-items:center; gap:7px; }
+    .card-title::before { content:'//'; color:var(--border); font-size:0.8rem; }
 
     /* Score bars */
-    .score-bars { display:flex; flex-direction:column; gap:14px; }
-    .sbar-row { display:flex; flex-direction:column; gap:5px; }
-    .sbar-header { display:flex; justify-content:space-between; }
+    .sbars { display:flex; flex-direction:column; gap:14px; }
+    .sbar { display:flex; flex-direction:column; gap:5px; }
+    .sbar-hd { display:flex; justify-content:space-between; }
     .sbar-name { font-size:0.83rem; font-weight:500; }
-    .sbar-num { font-family:'DM Mono',monospace; font-size:0.8rem; color:var(--muted); }
-    .sbar-track { height:5px; background:var(--border); border-radius:99px; overflow:hidden; }
-    .sbar-fill { height:100%; border-radius:99px; transition:width 1s ease; width:0%; }
-    .sbar-detail { font-size:0.78rem; color:var(--muted); line-height:1.5; }
+    .sbar-num  { font-family:'Courier Prime',monospace; font-size:0.78rem; color:var(--muted); }
+    .sbar-track { height:4px; background:var(--border); border-radius:99px; overflow:hidden; }
+    .sbar-fill  { height:100%; border-radius:99px; transition:width 1s ease; width:0%; }
+    .sbar-detail { font-size:0.78rem; color:var(--muted); line-height:1.55; }
 
     /* Mileage */
-    .mileage-ctx { font-size:0.88rem; line-height:1.65; padding:13px 15px; background:var(--bg); border-radius:var(--radius); border-left:3px solid var(--orange); margin-bottom:16px; }
-    .mileage-cols { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
-    .mcol-title { font-size:0.67rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--orange); margin-bottom:8px; }
-    .mcol-item { font-size:0.8rem; color:var(--muted); display:flex; gap:7px; line-height:1.4; margin-bottom:5px; }
-    .mcol-item::before { content:'·'; color:var(--orange); flex-shrink:0; }
+    .mi-ctx { font-size:0.88rem; line-height:1.7; padding:13px 15px; background:var(--bg); border-radius:var(--radius); border-left:3px solid var(--gold); margin-bottom:16px; }
+    .mi-cols { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+    .mi-col-title { font-family:'Courier Prime',monospace; font-size:0.64rem; color:var(--gold); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px; }
+    .mi-item { font-size:0.8rem; color:var(--muted); display:flex; gap:7px; line-height:1.4; margin-bottom:5px; }
+    .mi-item::before { content:'·'; color:var(--gold); flex-shrink:0; }
     .milestone-list { display:flex; flex-direction:column; gap:7px; }
     .milestone-row { display:flex; gap:12px; align-items:flex-start; background:var(--bg); border-radius:var(--radius); padding:9px 13px; }
-    .milestone-mi { font-family:'DM Mono',monospace; font-size:0.78rem; color:var(--orange); white-space:nowrap; flex-shrink:0; padding-top:1px; }
+    .milestone-mi { font-family:'Courier Prime',monospace; font-size:0.76rem; color:var(--gold); white-space:nowrap; flex-shrink:0; padding-top:1px; }
     .milestone-ev { font-size:0.79rem; color:var(--muted); line-height:1.4; }
 
     /* Issues */
-    .issues-list { display:flex; flex-direction:column; gap:12px; }
-    .issue-card { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:14px 16px; display:flex; gap:12px; align-items:flex-start; }
-    .sev-badge { font-size:0.64rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; padding:3px 7px; border-radius:4px; white-space:nowrap; flex-shrink:0; margin-top:2px; }
-    .sev-High   { background:rgba(239,68,68,.12); color:var(--avoid);   border:1px solid rgba(239,68,68,.3); }
-    .sev-Medium { background:rgba(251,191,36,.12); color:var(--caution); border:1px solid rgba(251,191,36,.3); }
-    .sev-Low    { background:rgba(34,197,94,.1);  color:var(--good);    border:1px solid rgba(34,197,94,.2); }
-    .issue-body { flex:1; }
-    .issue-name { font-size:0.9rem; font-weight:600; margin-bottom:3px; }
-    .issue-meta { font-size:0.74rem; color:var(--muted); margin-bottom:5px; }
-    .issue-detail { font-size:0.8rem; color:var(--muted); line-height:1.5; }
-    .issue-source { font-size:0.72rem; color:var(--muted); margin-top:4px; font-style:italic; }
+    .issues { display:flex; flex-direction:column; gap:11px; }
+    .issue-card { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:13px 15px; display:flex; gap:12px; align-items:flex-start; }
+    .sev { font-family:'Courier Prime',monospace; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; padding:3px 7px; border-radius:4px; white-space:nowrap; flex-shrink:0; margin-top:2px; }
+    .sev-High   { background:rgba(200,90,90,.12); color:var(--avoid);   border:1px solid rgba(200,90,90,.28); }
+    .sev-Medium { background:rgba(212,168,67,.12); color:var(--caution); border:1px solid rgba(212,168,67,.28); }
+    .sev-Low    { background:rgba(76,175,114,.1);  color:var(--good);   border:1px solid rgba(76,175,114,.2); }
+    .issue-body .issue-name   { font-size:0.88rem; font-weight:600; margin-bottom:3px; }
+    .issue-body .issue-meta   { font-family:'Courier Prime',monospace; font-size:0.7rem; color:var(--muted); margin-bottom:5px; }
+    .issue-body .issue-detail { font-size:0.79rem; color:var(--muted); line-height:1.5; }
+    .issue-body .issue-source { font-size:0.7rem; color:var(--muted); margin-top:4px; font-style:italic; }
 
     /* Community */
-    .community-list { display:flex; flex-direction:column; gap:12px; }
-    .comm-card { background:var(--bg); border:1px solid var(--border); border-left:3px solid var(--border); border-radius:var(--radius); padding:14px 16px; }
+    .comm-list { display:flex; flex-direction:column; gap:11px; }
+    .comm-card { background:var(--bg); border:1px solid var(--border); border-left:3px solid var(--border); border-radius:var(--radius); padding:13px 15px; }
     .comm-card.Positive { border-left-color:var(--good); }
     .comm-card.Negative { border-left-color:var(--avoid); }
     .comm-card.Mixed    { border-left-color:var(--caution); }
-    .comm-source { font-size:0.72rem; color:var(--muted); margin-bottom:7px; display:flex; align-items:center; gap:7px; }
-    .sent-tag { font-size:0.64rem; text-transform:uppercase; letter-spacing:0.06em; padding:2px 6px; border-radius:3px; }
-    .sent-Positive { background:rgba(34,197,94,.1); color:var(--good); }
-    .sent-Negative { background:rgba(239,68,68,.1); color:var(--avoid); }
-    .sent-Mixed    { background:rgba(251,191,36,.1); color:var(--caution); }
-    .comm-quote { font-size:0.85rem; line-height:1.6; font-style:italic; }
-    .comm-link { display:inline-block; margin-top:7px; font-size:0.72rem; color:var(--orange); text-decoration:none; }
+    .comm-src { font-family:'Courier Prime',monospace; font-size:0.68rem; color:var(--muted); margin-bottom:7px; display:flex; align-items:center; gap:7px; }
+    .sent { font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em; padding:2px 6px; border-radius:3px; }
+    .sent-Positive { background:rgba(76,175,114,.1); color:var(--good); }
+    .sent-Negative { background:rgba(200,90,90,.1);  color:var(--avoid); }
+    .sent-Mixed    { background:rgba(212,168,67,.1); color:var(--caution); }
+    .comm-quote { font-size:0.84rem; line-height:1.6; font-style:italic; color:var(--text); }
+    .comm-link { display:inline-block; margin-top:7px; font-family:'Courier Prime',monospace; font-size:0.7rem; color:var(--gold); text-decoration:none; }
     .comm-link:hover { text-decoration:underline; }
 
     /* Market */
     .market-cols { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px; }
     .market-col { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:14px; text-align:center; }
-    .market-col.fair { border-color:var(--orange); background:rgba(232,93,4,0.05); }
-    .market-col-label { font-size:0.67rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:5px; }
-    .market-col-price { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:1.7rem; }
-    .market-col.fair .market-col-price { color:var(--orange); }
+    .market-col.fair { border-color:var(--gold); background:rgba(196,148,72,0.06); }
+    .market-col-lbl { font-family:'Courier Prime',monospace; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:5px; }
+    .market-col-price { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:1.6rem; }
+    .market-col.fair .market-col-price { color:var(--gold); }
     .market-note { font-size:0.78rem; color:var(--muted); line-height:1.5; }
 
     /* Tips */
     .tip-list { display:flex; flex-direction:column; gap:9px; }
-    .tip-item { display:flex; gap:10px; font-size:0.85rem; line-height:1.5; }
-    .tip-item::before { content:'→'; color:var(--orange); flex-shrink:0; }
+    .tip-item { display:flex; gap:10px; font-size:0.84rem; line-height:1.5; }
+    .tip-item::before { content:'→'; color:var(--gold); flex-shrink:0; }
 
     /* Maintenance */
     .maint-list { display:flex; flex-direction:column; gap:10px; }
-    .maint-item { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:12px 15px; display:grid; grid-template-columns:1fr auto; gap:5px; }
-    .maint-name { font-weight:600; font-size:0.87rem; }
-    .maint-interval { font-size:0.75rem; color:var(--muted); }
-    .maint-detail { font-size:0.77rem; color:var(--muted); grid-column:1/-1; }
-    .maint-cost { font-family:'DM Mono',monospace; font-size:0.84rem; color:var(--caution); white-space:nowrap; text-align:right; }
+    .maint-item { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:12px 14px; display:grid; grid-template-columns:1fr auto; gap:4px; }
+    .maint-name { font-weight:600; font-size:0.86rem; }
+    .maint-int  { font-family:'Courier Prime',monospace; font-size:0.7rem; color:var(--muted); }
+    .maint-det  { font-size:0.76rem; color:var(--muted); grid-column:1/-1; }
+    .maint-cost { font-family:'Courier Prime',monospace; font-size:0.82rem; color:var(--caution); white-space:nowrap; text-align:right; }
 
-    /* Alt */
-    .alt-list { display:flex; flex-direction:column; gap:9px; }
-    .alt-item { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:12px 15px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; }
-    .alt-vehicle { font-weight:600; font-size:0.88rem; }
-    .alt-reason { font-size:0.79rem; color:var(--muted); text-align:right; flex:1; }
+    /* Alts */
+    .alt-list { display:flex; flex-direction:column; gap:8px; }
+    .alt-item { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius); padding:12px 14px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; }
+    .alt-vehicle { font-weight:600; font-size:0.86rem; }
+    .alt-reason  { font-size:0.78rem; color:var(--muted); text-align:right; flex:1; }
 
-    /* Summary */
-    .summary-text { font-size:0.92rem; line-height:1.7; }
-    .gen-text { font-size:0.88rem; line-height:1.7; color:var(--muted); }
+    .summary-text { font-size:0.92rem; line-height:1.75; font-weight:400; }
+    .gen-text     { font-size:0.87rem; line-height:1.7;  color:var(--muted); }
 
-    /* Another car CTA */
-    .another-car { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:32px; text-align:center; margin-top:40px; }
-    .another-car h3 { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1.8rem; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px; }
-    .another-car p { color:var(--muted); font-size:0.88rem; margin-bottom:20px; }
+    /* Another report */
+    .another { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:32px; text-align:center; margin-top:40px; }
+    .another h3 { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1.7rem; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px; }
+    .another p { color:var(--muted); font-size:0.87rem; margin-bottom:20px; }
 
     /* Error */
-    #error-section { max-width:560px; margin:60px auto; padding:0 24px; }
-    .error-card { background:rgba(239,68,68,.07); border:1px solid rgba(239,68,68,.25); border-radius:12px; padding:28px; text-align:center; }
-    .error-card h3 { color:var(--avoid); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1.5rem; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px; }
-    .error-card p { color:var(--muted); font-size:0.88rem; margin-bottom:16px; }
+    #error-section { max-width:520px; margin:60px auto; padding:0 24px; display:none; }
+    .error-card { background:rgba(200,90,90,.07); border:1px solid rgba(200,90,90,.22); border-radius:12px; padding:28px; text-align:center; }
+    .error-card h3 { color:var(--avoid); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1.4rem; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px; }
+    .error-card p { color:var(--muted); font-size:0.87rem; margin-bottom:16px; }
 
-    /* ── CONTACT / SUPPORT PAGES ── */
-    .info-page { max-width: 640px; margin: 0 auto; padding: 60px 24px 100px; }
-    .info-page h2 {
-      font-family:'Barlow Condensed',sans-serif;
-      font-weight:800; font-size:2.4rem;
-      text-transform:uppercase; letter-spacing:0.03em;
-      margin-bottom:8px;
-    }
-    .info-page h2 em { font-style:normal; color:var(--orange); }
-    .info-page .sub { color:var(--muted); font-size:0.92rem; line-height:1.65; margin-bottom:36px; }
+    /* ── INFO PAGES (contact / support / pricing) ── */
+    .info-page { max-width:620px; margin:0 auto; padding:60px 24px 100px; }
+    .info-page h2 { font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:2.4rem; text-transform:uppercase; letter-spacing:0.03em; margin-bottom:8px; }
+    .info-page h2 em { font-style:normal; color:var(--gold); }
+    .info-page .sub { color:var(--muted); font-size:0.92rem; line-height:1.7; margin-bottom:36px; }
 
     .form-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:28px; }
-    .form-card label { display:block; font-size:0.68rem; font-weight:600; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); margin-bottom:6px; margin-top:16px; }
+    .form-card label { display:block; font-family:'Courier Prime',monospace; font-size:0.64rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:6px; margin-top:16px; }
     .form-card label:first-child { margin-top:0; }
     .form-card input, .form-card select, .form-card textarea {
       width:100%; background:var(--bg); border:1px solid var(--border);
       border-radius:var(--radius); color:var(--text);
-      font-family:'DM Sans',sans-serif; font-size:0.92rem;
+      font-family:'Barlow',sans-serif; font-size:0.9rem;
       padding:11px 14px; outline:none; transition:border-color .2s;
       -webkit-appearance:none; appearance:none;
     }
-    .form-card input:focus, .form-card select:focus, .form-card textarea:focus { border-color:var(--orange); }
+    .form-card input:focus, .form-card select:focus, .form-card textarea:focus { border-color:var(--gold); }
     .form-card textarea { resize:vertical; min-height:120px; }
-    .form-card select option { background:#1a1a1a; }
-
-    .submit-btn {
-      width:100%; margin-top:20px;
-      background:var(--orange); color:#fff; border:none;
-      border-radius:var(--radius);
-      font-family:'Barlow Condensed',sans-serif;
-      font-weight:700; font-size:1.2rem;
-      text-transform:uppercase; letter-spacing:0.1em;
-      padding:14px; cursor:pointer;
-      transition:background .2s;
-    }
-    .submit-btn:hover { background:var(--orange-ho); }
-    .submit-btn:disabled { opacity:0.5; cursor:not-allowed; }
-
+    .form-card select option { background:var(--surface2); }
+    .submit-btn { width:100%; margin-top:20px; background:var(--gold); color:var(--bg); border:none; border-radius:var(--radius); font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1.15rem; text-transform:uppercase; letter-spacing:0.1em; padding:14px; cursor:pointer; transition:background .2s; }
+    .submit-btn:hover { background:var(--gold-ho); }
+    .submit-btn:disabled { opacity:0.45; cursor:not-allowed; }
     .success-msg { display:none; text-align:center; padding:24px; }
-    .success-msg .check { font-size:2.5rem; margin-bottom:12px; }
-    .success-msg h4 { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1.4rem; text-transform:uppercase; margin-bottom:8px; }
-    .success-msg p { color:var(--muted); font-size:0.88rem; }
+    .success-msg .check { font-size:2.2rem; margin-bottom:12px; }
+    .success-msg h4 { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:1.3rem; text-transform:uppercase; margin-bottom:8px; }
+    .success-msg p { color:var(--muted); font-size:0.87rem; }
 
     .info-boxes { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:32px; }
     .info-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px; }
-    .info-box-icon { font-size:1.4rem; margin-bottom:8px; }
-    .info-box-title { font-weight:600; font-size:0.88rem; margin-bottom:4px; }
-    .info-box-body { font-size:0.78rem; color:var(--muted); line-height:1.5; }
+    .info-box-icon { font-size:1.3rem; margin-bottom:8px; }
+    .info-box-title { font-weight:600; font-size:0.86rem; margin-bottom:4px; }
+    .info-box-body { font-size:0.77rem; color:var(--muted); line-height:1.55; }
 
-    /* ── PRICING PAGE ── */
-    .pricing-page { max-width: 860px; margin: 0 auto; padding: 60px 24px 100px; text-align:center; }
-    .pricing-page h2 { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:2.8rem; text-transform:uppercase; letter-spacing:0.03em; margin-bottom:8px; }
-    .pricing-page h2 em { font-style:normal; color:var(--orange); }
-    .pricing-page .sub { color:var(--muted); font-size:0.92rem; margin-bottom:48px; }
-
-    .pricing-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:32px; }
-    .price-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:28px 22px; text-align:center; position:relative; }
-    .price-card.featured { border-color:var(--orange); background: linear-gradient(180deg, rgba(232,93,4,0.07) 0%, var(--surface) 100%); }
-    .price-badge { position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:var(--orange); color:#fff; font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; padding:3px 12px; border-radius:99px; white-space:nowrap; }
-    .price-name { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:1.1rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-bottom:12px; }
-    .price-amount { font-family:'Barlow Condensed',sans-serif; font-weight:800; font-size:3rem; line-height:1; margin-bottom:4px; }
-    .price-card.featured .price-amount { color:var(--orange); }
-    .price-period { font-size:0.75rem; color:var(--muted); margin-bottom:20px; }
-    .price-features { list-style:none; text-align:left; display:flex; flex-direction:column; gap:8px; margin-bottom:24px; }
-    .price-features li { font-size:0.82rem; color:var(--muted); display:flex; gap:8px; align-items:flex-start; }
-    .price-features li::before { content:'✓'; color:var(--orange); flex-shrink:0; font-weight:700; }
-    .price-btn { width:100%; background:var(--border); color:var(--text); border:none; border-radius:var(--radius); font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:1rem; text-transform:uppercase; letter-spacing:0.08em; padding:12px; cursor:pointer; transition:background .2s; }
+    /* ── PRICING ── */
+    .pricing-page { max-width:820px; margin:0 auto; padding:60px 24px 100px; text-align:center; }
+    .pricing-page h2 { font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:2.6rem; text-transform:uppercase; letter-spacing:0.03em; margin-bottom:8px; }
+    .pricing-page h2 em { font-style:normal; color:var(--gold); }
+    .pricing-page .sub { color:var(--muted); font-size:0.9rem; margin-bottom:46px; }
+    .price-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:28px; }
+    .price-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:26px 20px; text-align:center; position:relative; }
+    .price-card.featured { border-color:var(--gold); background:linear-gradient(180deg,rgba(196,148,72,0.08) 0%,var(--surface) 100%); }
+    .price-badge { position:absolute; top:-11px; left:50%; transform:translateX(-50%); background:var(--gold); color:var(--bg); font-family:'Courier Prime',monospace; font-size:0.62rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; padding:3px 12px; border-radius:99px; white-space:nowrap; }
+    .price-name { font-family:'Courier Prime',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:12px; }
+    .price-amount { font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:3rem; line-height:1; margin-bottom:4px; }
+    .price-card.featured .price-amount { color:var(--gold); }
+    .price-period { font-size:0.74rem; color:var(--muted); margin-bottom:20px; font-family:'Courier Prime',monospace; }
+    .price-features { list-style:none; text-align:left; display:flex; flex-direction:column; gap:8px; margin-bottom:22px; }
+    .price-features li { font-size:0.81rem; color:var(--muted); display:flex; gap:8px; align-items:flex-start; }
+    .price-features li::before { content:'✓'; color:var(--gold); flex-shrink:0; font-weight:700; }
+    .price-btn { width:100%; background:var(--border); color:var(--text); border:none; border-radius:var(--radius); font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:1rem; text-transform:uppercase; letter-spacing:0.08em; padding:11px; cursor:pointer; transition:background .2s; }
     .price-btn:hover { background:var(--surface2); }
-    .price-card.featured .price-btn { background:var(--orange); color:#fff; }
-    .price-card.featured .price-btn:hover { background:var(--orange-ho); }
-    .pricing-note { font-size:0.8rem; color:var(--muted); }
+    .price-card.featured .price-btn { background:var(--gold); color:var(--bg); }
+    .price-card.featured .price-btn:hover { background:var(--gold-ho); }
+    .pricing-note { font-family:'Courier Prime',monospace; font-size:0.75rem; color:var(--muted); }
 
-    /* Footer */
-    footer { border-top:1px solid var(--border); padding:24px 32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
-    .footer-logo { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.9rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); }
-    .footer-logo em { font-style:normal; color:var(--orange); }
+    /* ── FOOTER ── */
+    footer { border-top:1px solid var(--border); padding:22px 32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+    .footer-brand { font-family:'Barlow Condensed',sans-serif; font-weight:700; font-size:0.88rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); }
+    .footer-brand em { font-style:normal; color:var(--gold); }
     .footer-links { display:flex; gap:16px; }
-    .footer-link { font-size:0.75rem; color:var(--muted); text-decoration:none; cursor:pointer; }
+    .footer-link { font-family:'Courier Prime',monospace; font-size:0.72rem; color:var(--muted); text-decoration:none; cursor:pointer; }
     .footer-link:hover { color:var(--text); }
-    .footer-copy { font-size:0.72rem; color:var(--muted); }
+    .footer-copy { font-family:'Courier Prime',monospace; font-size:0.68rem; color:var(--muted); }
 
-    /* Responsive */
-    @media (max-width:640px) {
-      .form-grid-3 { grid-template-columns:1fr 1fr; }
-      .form-grid-2 { grid-template-columns:1fr; }
-      .verdict-banner { flex-direction:column; }
-      .market-cols { grid-template-columns:1fr; }
-      .mileage-cols { grid-template-columns:1fr; }
-      .pricing-grid { grid-template-columns:1fr; }
-      .info-boxes { grid-template-columns:1fr; }
-      nav .nav-link { display:none; }
-      #tips-grid { grid-template-columns:1fr !important; }
-      header { padding:14px 20px; }
+    @media(max-width:640px){
+      .form-grid-3{grid-template-columns:1fr 1fr;}
+      .form-grid-2{grid-template-columns:1fr;}
+      .verdict-banner{flex-direction:column;}
+      .market-cols,.mi-cols,.price-grid,.info-boxes{grid-template-columns:1fr;}
+      nav .nav-link{display:none;}
+      #tips-grid{grid-template-columns:1fr!important;}
+      header{padding:14px 20px;}
     }
   </style>
 </head>
 <body>
 
-<!-- ══ HEADER ══════════════════════════════════════════════════════════════ -->
+<!-- ══ HEADER ════════════════════════════════════════════════════════════════ -->
 <header>
   <a class="logo" onclick="showPage('home')">
-    <div class="logo-mark"><span>YDM</span></div>
+    <div class="logo-mark"><span>DC</span></div>
     <div class="logo-text">
-      <span class="your">Your</span>
-      <span class="digital">Digital</span>
-      <span class="mechanic">Mechanic</span>
+      <span class="drive">Drive</span>
+      <span class="counsel">Counselor</span>
     </div>
   </a>
   <nav>
-    <button class="nav-link" onclick="showPage('pricing')">Pricing</button>
-    <button class="nav-link" onclick="showPage('contact')">Get Expert Help</button>
+    <button class="nav-link" onclick="showPage('contact')">Work With Me</button>
     <button class="nav-link" onclick="showPage('support')">Support</button>
-    <button class="nav-btn" onclick="showPage('home');setTimeout(()=>document.getElementById('search-card').scrollIntoView({behavior:'smooth'}),100)">Run a Report</button>
+    <button class="nav-btn" onclick="showPage('home');setTimeout(()=>document.getElementById('search-card').scrollIntoView({behavior:'smooth'}),80)">Run an Assessment</button>
   </nav>
 </header>
 
-<!-- ══ HOME PAGE ════════════════════════════════════════════════════════════ -->
+<!-- ══ HOME ══════════════════════════════════════════════════════════════════ -->
 <div id="page-home" class="page-section active">
 
-  <!-- SEARCH -->
   <div id="search-wrap">
     <div class="hero">
-      <div class="hero-eyebrow">AI-Powered Car Intelligence</div>
-      <h1>Know Before<br>You <em>Buy.</em></h1>
-      <p>Get a mechanic's honest take on any used vehicle — reliability scores, known issues, mileage breakdown, and fair market value. In seconds.</p>
+      <div class="hero-eyebrow">AI-Powered Car Guidance</div>
+      <h1>Confident<br>Decisions.<br><em>Every Drive.</em></h1>
+      <p>Get an honest, detailed assessment on any used vehicle before you buy. Reliability, known issues, fair market value — delivered like advice from a trusted friend who knows cars.</p>
 
       <div class="search-card" id="search-card">
         <div class="form-grid-3">
@@ -573,33 +382,30 @@
             <select id="modelSelect" onchange="onModelChange()" disabled><option value="">Select Model</option></select>
           </div>
         </div>
-
         <div class="form-grid-3">
-          <div class="form-group"><label>Trim <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+          <div class="form-group"><label>Trim <span class="opt-label">(optional)</span></label>
             <select id="trimSelect" onchange="onTrimChange()" disabled><option value="">Select Trim</option></select>
           </div>
-          <div class="form-group"><label>Engine <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+          <div class="form-group"><label>Engine <span class="opt-label">(optional)</span></label>
             <select id="engineSelect" disabled><option value="">Select Engine</option></select>
           </div>
-          <div class="form-group"><label>Mileage <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+          <div class="form-group"><label>Mileage <span class="opt-label">(optional)</span></label>
             <input type="number" id="mileage" placeholder="e.g. 85000" min="0" max="999999"/>
           </div>
         </div>
-
         <div class="divider-or">or search by VIN</div>
-
         <div class="form-grid-1">
-          <div class="form-group"><label>VIN <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(decodes year, make, model & engine automatically)</span></label>
+          <div class="form-group">
+            <label>VIN <span class="opt-label">(decodes year, make, model & engine automatically)</span></label>
             <input type="text" id="vin" placeholder="e.g. 1HGBH41JXMN109186" maxlength="17" style="text-transform:uppercase"/>
           </div>
         </div>
-
-        <button class="run-btn" onclick="runReport()">Run My Report →</button>
+        <button class="run-btn" onclick="runReport()">Run Assessment →</button>
       </div>
 
       <div class="trust-strip">
-        <div class="trust-item"><span>🔍</span> Real owner data</div>
-        <div class="trust-item"><span>🗣️</span> Reddit + forums</div>
+        <div class="trust-item"><span>🔍</span> Reddit + owner forums</div>
+        <div class="trust-item"><span>📊</span> Consumer Reports data</div>
         <div class="trust-item"><span>⚡</span> AI-synthesized</div>
         <div class="trust-item"><span>🔒</span> No dealer affiliation</div>
       </div>
@@ -607,50 +413,26 @@
   </div>
 
   <!-- LOADING -->
-  <div id="loading" style="display:none">
+  <div id="loading">
     <div class="loading-eyebrow" id="loadingEyebrow">Researching</div>
-    <div class="loading-title">Pulling Your Report</div>
+    <div class="loading-title">Building Your Assessment</div>
     <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
     <div class="progress-pct"><span id="progressPct">0</span>% complete</div>
     <div class="src-grid">
-      <div class="src-card" id="src-reddit">
-        <div class="src-icon">🗣️</div>
-        <div class="src-info"><div class="src-name">Reddit Forums</div><div class="src-status" id="src-reddit-status">Waiting...</div></div>
-        <div class="src-check">✓</div>
-      </div>
-      <div class="src-card" id="src-cardriver">
-        <div class="src-icon">🏎️</div>
-        <div class="src-info"><div class="src-name">Car and Driver</div><div class="src-status" id="src-cardriver-status">Waiting...</div></div>
-        <div class="src-check">✓</div>
-      </div>
-      <div class="src-card" id="src-consumer">
-        <div class="src-icon">📊</div>
-        <div class="src-info"><div class="src-name">Consumer Reports</div><div class="src-status" id="src-consumer-status">Waiting...</div></div>
-        <div class="src-check">✓</div>
-      </div>
-      <div class="src-card" id="src-edmunds">
-        <div class="src-icon">💰</div>
-        <div class="src-info"><div class="src-name">Edmunds / Market Data</div><div class="src-status" id="src-edmunds-status">Waiting...</div></div>
-        <div class="src-check">✓</div>
-      </div>
-      <div class="src-card" id="src-forums">
-        <div class="src-icon">🔧</div>
-        <div class="src-info"><div class="src-name">Owner Forums</div><div class="src-status" id="src-forums-status">Waiting...</div></div>
-        <div class="src-check">✓</div>
-      </div>
-      <div class="src-card" id="src-ai">
-        <div class="src-icon">⚡</div>
-        <div class="src-info"><div class="src-name">AI Synthesis</div><div class="src-status" id="src-ai-status">Waiting...</div></div>
-        <div class="src-check">✓</div>
-      </div>
+      <div class="src-card" id="src-reddit"><div class="src-icon">🗣️</div><div class="src-info"><div class="src-name">Reddit Forums</div><div class="src-status" id="src-reddit-status">Waiting...</div></div><div class="src-check">✓</div></div>
+      <div class="src-card" id="src-cardriver"><div class="src-icon">🏎️</div><div class="src-info"><div class="src-name">Car and Driver</div><div class="src-status" id="src-cardriver-status">Waiting...</div></div><div class="src-check">✓</div></div>
+      <div class="src-card" id="src-consumer"><div class="src-icon">📊</div><div class="src-info"><div class="src-name">Consumer Reports</div><div class="src-status" id="src-consumer-status">Waiting...</div></div><div class="src-check">✓</div></div>
+      <div class="src-card" id="src-edmunds"><div class="src-icon">💰</div><div class="src-info"><div class="src-name">Edmunds / Market Data</div><div class="src-status" id="src-edmunds-status">Waiting...</div></div><div class="src-check">✓</div></div>
+      <div class="src-card" id="src-forums"><div class="src-icon">🔧</div><div class="src-info"><div class="src-name">Owner Forums</div><div class="src-status" id="src-forums-status">Waiting...</div></div><div class="src-check">✓</div></div>
+      <div class="src-card" id="src-ai"><div class="src-icon">⚡</div><div class="src-info"><div class="src-name">AI Synthesis</div><div class="src-status" id="src-ai-status">Waiting...</div></div><div class="src-check">✓</div></div>
     </div>
-    <div class="loading-action" id="loadingAction">Starting deep research...</div>
+    <div class="loading-action" id="loadingAction">Starting research...</div>
   </div>
 
   <!-- ERROR -->
-  <div id="error-section" style="display:none">
+  <div id="error-section">
     <div class="error-card">
-      <h3>Report Failed</h3>
+      <h3>Assessment Failed</h3>
       <p id="error-msg">Something went wrong. Please try again.</p>
       <button class="btn-ghost" onclick="resetToSearch()" style="margin:0 auto">← Try Again</button>
     </div>
@@ -658,230 +440,233 @@
 
   <!-- REPORT -->
   <div id="report-section" style="display:none">
-
     <div class="report-actions">
-      <button class="btn-ghost" onclick="resetToSearch()">← New Search</button>
+      <button class="btn-ghost" onclick="resetToSearch()">← New Assessment</button>
       <button class="btn-ghost" onclick="downloadPDF()">⬇ Download PDF</button>
     </div>
 
-    <!-- VERDICT -->
     <div class="verdict-banner" id="verdictBanner">
       <div>
-        <div class="verdict-tag" id="verdictTag">GAS</div>
+        <div class="verdict-tag" id="verdictTag">Good Buy</div>
         <div class="verdict-vehicle" id="verdictVehicle"></div>
         <div class="verdict-reason" id="verdictReason"></div>
       </div>
-      <div class="score-circle-wrap">
-        <div class="score-circle">
-          <svg viewBox="0 0 108 108">
-            <circle class="score-circle-bg" cx="54" cy="54" r="47"/>
-            <circle class="score-circle-fill" id="scoreArc" cx="54" cy="54" r="47" stroke-dasharray="295.3" stroke-dashoffset="295.3"/>
+      <div class="score-wrap">
+        <div class="score-ring">
+          <svg viewBox="0 0 106 106">
+            <circle class="ring-bg"   cx="53" cy="53" r="46"/>
+            <circle class="ring-fill" id="scoreArc" cx="53" cy="53" r="46" stroke-dasharray="289.0" stroke-dashoffset="289.0"/>
           </svg>
-          <div class="score-circle-num"><span id="scoreNum">0</span><span class="denom">/100</span></div>
+          <div class="score-num"><span id="scoreNum">0</span><span class="denom">/100</span></div>
         </div>
-        <div class="score-circle-label">Overall Score</div>
+        <div class="score-lbl">Assessment Score</div>
       </div>
     </div>
 
-    <!-- SCORE LEGEND -->
     <div class="score-legend">
-      <div class="legend-item"><div class="legend-dot" style="background:var(--avoid)"></div>0–59 Avoid</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--caution)"></div>60–74 Proceed with caution</div>
-      <div class="legend-item"><div class="legend-dot" style="background:var(--good)"></div>75–89 Good buy</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div>90–100 Excellent</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--avoid)"></div>0–44 · Walk Away</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#d4824a"></div>45–59 · Risky Buy</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--caution)"></div>60–74 · Proceed Carefully</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#7ac95a"></div>75–89 · Good Buy</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--good)"></div>90–100 · Excellent</div>
     </div>
 
-    <div class="card"><div class="card-title">The Verdict</div><div class="summary-text" id="summaryText"></div></div>
-    <div class="card"><div class="card-title">Score Breakdown</div><div class="score-bars" id="scoreBars"></div></div>
-    <div class="card" id="mileageCard"><div class="card-title">Mileage Breakdown</div>
-      <div class="mileage-ctx" id="mileageCtx"></div>
-      <div class="mileage-cols">
-        <div><div class="mcol-title">Should be done by now</div><div id="servicesDue"></div></div>
-        <div><div class="mcol-title">Coming up next</div><div id="servicesUpcoming"></div></div>
+    <div class="card"><div class="card-title">Our Assessment</div><div class="summary-text" id="summaryText"></div></div>
+    <div class="card"><div class="card-title">Score Breakdown</div><div class="sbars" id="scoreBars"></div></div>
+
+    <div class="card" id="mileageCard">
+      <div class="card-title">Mileage Breakdown</div>
+      <div class="mi-ctx" id="miCtx"></div>
+      <div class="mi-cols">
+        <div><div class="mi-col-title">Should be done by now</div><div id="servicesDue"></div></div>
+        <div><div class="mi-col-title">Coming up next</div><div id="servicesUpcoming"></div></div>
       </div>
-      <div class="mcol-title" style="margin-bottom:8px">Key Milestones</div>
+      <div class="mi-col-title" style="margin-bottom:8px">Key Milestones</div>
       <div class="milestone-list" id="milestonesList"></div>
     </div>
-    <div class="card"><div class="card-title">Known Issues</div><div class="issues-list" id="issuesList"></div></div>
+
+    <div class="card"><div class="card-title">Known Issues</div><div class="issues" id="issuesList"></div></div>
     <div class="card"><div class="card-title">Maintenance Alerts</div><div class="maint-list" id="maintList"></div></div>
-    <div class="card"><div class="card-title">What People Are Saying</div><div class="community-list" id="commList"></div></div>
-    <div class="card"><div class="card-title">Fair Market Range</div>
+    <div class="card"><div class="card-title">What Owners Are Saying</div><div class="comm-list" id="commList"></div></div>
+
+    <div class="card">
+      <div class="card-title">Fair Market Range</div>
       <div class="market-cols" id="marketCols"></div>
       <div class="market-note" id="marketNote"></div>
     </div>
+
     <div class="card"><div class="card-title">About This Generation</div><div class="gen-text" id="genNotes"></div></div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px" id="tips-grid">
-      <div class="card" style="margin-bottom:0"><div class="card-title">Buying Tips</div><div class="tip-list" id="buyingTips"></div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px" id="tips-grid">
+      <div class="card" style="margin-bottom:0"><div class="card-title">Before You Buy</div><div class="tip-list" id="buyingTips"></div></div>
       <div class="card" style="margin-bottom:0"><div class="card-title">What to Inspect</div><div class="tip-list" id="inspectList"></div></div>
     </div>
 
     <div class="card"><div class="card-title">Alternatives to Consider</div><div class="alt-list" id="altList"></div></div>
 
-    <div class="another-car">
-      <h3>Run Another Report</h3>
-      <p>It's free. No sign-up required. Know before you buy, every time.</p>
-      <button class="run-btn" style="max-width:300px;margin:0 auto" onclick="resetToSearch()">New Search →</button>
+    <div class="another">
+      <h3>Assess Another Vehicle</h3>
+      <p>Reports are free during our beta. Get the honest picture on as many cars as you need.</p>
+      <button class="run-btn" style="max-width:320px;margin:0 auto" onclick="resetToSearch()">New Assessment →</button>
     </div>
-
   </div>
+
 </div><!-- /page-home -->
 
-<!-- ══ PRICING PAGE ══════════════════════════════════════════════════════════ -->
+<!-- ══ WORK WITH ME ════════════════════════════════════════════════════════════ -->
 <div id="page-pricing" class="page-section">
-  <div class="pricing-page">
-    <h2>Simple, <em>Honest</em> Pricing</h2>
-    <p class="sub">Start free. Pay only when you need more.</p>
+  <div class="info-page" style="max-width:680px">
+    <h2>Work <em>With Me</em></h2>
+    <p class="sub">Drive Counselor gives you the data. But sometimes you want a real person to walk you through the whole picture — what to buy, what to avoid, what to offer, and where to look. That's where I come in.</p>
 
-    <div class="pricing-grid">
-      <div class="price-card">
-        <div class="price-name">Single Report</div>
-        <div class="price-amount">Free</div>
-        <div class="price-period">Your first report, on us</div>
-        <ul class="price-features">
-          <li>Full vehicle report</li>
-          <li>Reliability score</li>
-          <li>Known issues & mileage breakdown</li>
-          <li>Fair market range</li>
-          <li>PDF download</li>
-        </ul>
-        <button class="price-btn" onclick="showPage('home')">Run a Report</button>
-      </div>
-
-      <div class="price-card featured">
-        <div class="price-badge">Most Popular</div>
-        <div class="price-name">5-Report Pack</div>
-        <div class="price-amount">$9.99</div>
-        <div class="price-period">~$2 per report</div>
-        <ul class="price-features">
-          <li>Everything in Free</li>
-          <li>5 reports, use anytime</li>
-          <li>Priority research depth</li>
-          <li>Never expires</li>
-        </ul>
-        <button class="price-btn" onclick="handlePurchase('pack5')">Get 5 Reports — $9.99</button>
-      </div>
-
-      <div class="price-card">
-        <div class="price-name">Unlimited</div>
-        <div class="price-amount">$14<span style="font-size:1.4rem">.99</span></div>
-        <div class="price-period">per month</div>
-        <ul class="price-features">
-          <li>Unlimited reports</li>
-          <li>Everything in 5-Pack</li>
-          <li>Great for dealers & enthusiasts</li>
-          <li>Cancel anytime</li>
-        </ul>
-        <button class="price-btn" onclick="handlePurchase('unlimited')">Go Unlimited — $14.99/mo</button>
-      </div>
-    </div>
-
-    <p class="pricing-note">Payments coming soon. For now, all reports are free while we're in beta. 🎉</p>
-  </div>
-</div>
-
-<!-- ══ CONTACT PAGE ══════════════════════════════════════════════════════════ -->
-<div id="page-contact" class="page-section">
-  <div class="info-page">
-    <h2>Get <em>Expert Help</em></h2>
-    <p class="sub">Want a real person to walk you through a purchase decision? Alex will personally review your situation and give you a straight answer — just like texting a friend who knows cars.</p>
-
-    <div class="info-boxes">
+    <div class="info-boxes" style="margin-bottom:28px">
       <div class="info-box">
         <div class="info-box-icon">🔍</div>
-        <div class="info-box-title">What you'll get</div>
-        <div class="info-box-body">A personal response with specific advice on the vehicle you're considering — including whether to buy, negotiate, or walk.</div>
+        <div class="info-box-title">What I do</div>
+        <div class="info-box-body">I'll personally research your situation — your budget, needs, lifestyle — and give you a shortlist of the right vehicles and what to pay for them.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-box-icon">🤝</div>
+        <div class="info-box-title">Who it's for</div>
+        <div class="info-box-body">First-time buyers, people who hate car shopping, anyone who wants a trusted second opinion before signing anything.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-box-icon">💬</div>
+        <div class="info-box-title">How it works</div>
+        <div class="info-box-body">Fill out the form. I'll review your situation and follow up within 24 hours with honest guidance — no agenda, no upsell.</div>
       </div>
       <div class="info-box">
         <div class="info-box-icon">⏱️</div>
         <div class="info-box-title">Response time</div>
-        <div class="info-box-body">Typically within 24 hours. If you're standing on a lot right now, note that in the message and we'll prioritize.</div>
+        <div class="info-box-body">Typically within 24 hours. Standing on a lot right now? Say so and I'll prioritize your message.</div>
       </div>
     </div>
 
+    <div class="form-card">
+      <div id="consult-form-wrap">
+        <label>Your Name</label>
+        <input type="text" id="co-name" placeholder="First name is fine"/>
+
+        <label>Email Address</label>
+        <input type="email" id="co-email" placeholder="you@email.com"/>
+
+        <label>What's your situation?</label>
+        <select id="co-situation">
+          <option value="">Select one...</option>
+          <option>I need help figuring out what car to buy</option>
+          <option>I found a specific car and want a second opinion</option>
+          <option>I'm at a dealership or with a seller right now</option>
+          <option>I want help negotiating the price</option>
+          <option>I want a full vehicle search done for me</option>
+          <option>Something else</option>
+        </select>
+
+        <label>Budget <span class="opt-label">(optional but helpful)</span></label>
+        <input type="text" id="co-budget" placeholder="e.g. $10,000–$15,000"/>
+
+        <label>Timeline <span class="opt-label">(optional)</span></label>
+        <select id="co-timeline">
+          <option value="">Select one...</option>
+          <option>I need to buy today or this week</option>
+          <option>Within the next month</option>
+          <option>Just starting to look — no rush</option>
+        </select>
+
+        <label>Tell me more</label>
+        <textarea id="co-message" placeholder="What are you looking for? What matters most — reliability, low cost to own, off-road capability, something for the family? Any cars you're already considering? The more context, the better I can help."></textarea>
+
+        <button class="submit-btn" onclick="submitConsult()">Send My Request →</button>
+      </div>
+      <div class="success-msg" id="consult-success">
+        <div class="check">✅</div>
+        <h4>Request received</h4>
+        <p>I'll review your situation and follow up within 24 hours. If it's urgent, I'll prioritize.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONTACT ════════════════════════════════════════════════════════════════ -->
+<div id="page-contact" class="page-section">
+  <div class="info-page">
+    <h2>Got a <em>Specific Car?</em></h2>
+    <p class="sub">Drop the details here and I'll give you a straight answer on whether it's worth it — no jargon, no agenda. For broader help finding the right vehicle altogether, check out <span style="color:var(--gold);cursor:pointer" onclick="showPage('pricing')">Work With Me</span>.</p>
+    <div class="info-boxes">
+      <div class="info-box"><div class="info-box-icon">🤝</div><div class="info-box-title">What you'll get</div><div class="info-box-body">Personal guidance on your specific situation — whether to buy, negotiate, or walk away, and exactly why.</div></div>
+      <div class="info-box"><div class="info-box-icon">⏱️</div><div class="info-box-title">Response time</div><div class="info-box-body">Typically within 24 hours. Standing on a lot right now? Say so and we'll prioritize.</div></div>
+    </div>
     <div class="form-card">
       <div id="contact-form-wrap">
         <label>Your Name</label>
         <input type="text" id="c-name" placeholder="First name is fine"/>
-
         <label>Email Address</label>
         <input type="email" id="c-email" placeholder="you@email.com"/>
-
         <label>Vehicle You're Looking At</label>
-        <input type="text" id="c-vehicle" placeholder="e.g. 2016 Subaru Outback 3.6R, 94k miles"/>
-
-        <label>What's your situation?</label>
+        <input type="text" id="c-vehicle" placeholder="e.g. 2016 Subaru Outback 3.6R, 94k miles, $14,500"/>
+        <label>Your Situation</label>
         <select id="c-situation">
           <option value="">Select one...</option>
           <option>I found a car online and want a second opinion</option>
-          <option>I'm at a dealership / private seller right now</option>
+          <option>I'm at a dealership or with a private seller right now</option>
           <option>I'm comparing a few options and need help deciding</option>
           <option>I want help negotiating the price</option>
-          <option>Other</option>
+          <option>Something else</option>
         </select>
-
         <label>Tell me more</label>
-        <textarea id="c-message" placeholder="Share anything relevant — asking price, known issues, your budget, what you'll use it for..."></textarea>
-
+        <textarea id="c-message" placeholder="Share anything relevant — asking price, what you know about it, your budget, what you'll use it for..."></textarea>
         <button class="submit-btn" onclick="submitContact()">Send My Question →</button>
       </div>
       <div class="success-msg" id="contact-success">
         <div class="check">✅</div>
-        <h4>Got it!</h4>
-        <p>We'll be in touch within 24 hours. If it's urgent, note it in your message.</p>
+        <h4>Message received</h4>
+        <p>We'll be in touch within 24 hours. If it's urgent, we'll prioritize.</p>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ══ SUPPORT PAGE ══════════════════════════════════════════════════════════ -->
+<!-- ══ SUPPORT ════════════════════════════════════════════════════════════════ -->
 <div id="page-support" class="page-section">
   <div class="info-page">
     <h2>Report an <em>Issue</em></h2>
-    <p class="sub">If your report didn't load, the data looked off, or something broke — tell us. We'll look into it and follow up.</p>
-
+    <p class="sub">If your assessment didn't load, data looked off, or something broke — let us know. We'll look into it.</p>
     <div class="form-card">
       <div id="support-form-wrap">
         <label>Your Email</label>
         <input type="email" id="s-email" placeholder="you@email.com"/>
-
-        <label>What vehicle were you searching?</label>
+        <label>Vehicle You Were Searching</label>
         <input type="text" id="s-vehicle" placeholder="e.g. 2019 Ford F-150 Lariat"/>
-
-        <label>What went wrong?</label>
+        <label>What Went Wrong</label>
         <select id="s-issue">
           <option value="">Select one...</option>
-          <option>Report didn't load — just spun forever</option>
-          <option>Report loaded but data looks wrong or off</option>
+          <option>Assessment didn't load — spun forever</option>
+          <option>Assessment loaded but data looks wrong</option>
           <option>PDF download didn't work</option>
-          <option>Dropdown / form not working</option>
+          <option>Dropdown or form not working</option>
           <option>Got an error message</option>
           <option>Something else</option>
         </select>
-
-        <label>Any other details?</label>
-        <textarea id="s-message" placeholder="What browser were you using? What did the error say? Anything helps..."></textarea>
-
-        <button class="submit-btn" onclick="submitSupport()">Submit Report →</button>
+        <label>Any Other Details</label>
+        <textarea id="s-message" placeholder="Browser you were using, what the error said, anything helps..."></textarea>
+        <button class="submit-btn" onclick="submitSupport()">Submit →</button>
       </div>
       <div class="success-msg" id="support-success">
         <div class="check">✅</div>
         <h4>Thanks for letting us know</h4>
-        <p>We'll look into it and follow up to your email if we need more info.</p>
+        <p>We'll look into it and follow up if we need more info.</p>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ══ FOOTER ════════════════════════════════════════════════════════════════ -->
+<!-- ══ FOOTER ═════════════════════════════════════════════════════════════════ -->
 <footer>
-  <div class="footer-logo">Your <em>Digital</em> Mechanic</div>
+  <div class="footer-brand">Drive <em>Counselor</em></div>
   <div class="footer-links">
-    <span class="footer-link" onclick="showPage('pricing')">Pricing</span>
-    <span class="footer-link" onclick="showPage('contact')">Get Expert Help</span>
+    <span class="footer-link" onclick="showPage('contact')">Work With Me</span>
     <span class="footer-link" onclick="showPage('support')">Support</span>
   </div>
-  <div class="footer-copy">© 2026 Your Digital Mechanic · For informational purposes only</div>
+  <div class="footer-copy">© 2026 Drive Counselor · For informational purposes only · Not affiliated with any dealer or manufacturer</div>
 </footer>
 
 <script>
@@ -889,133 +674,117 @@
 function showPage(id) {
   document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
   document.getElementById('page-' + id)?.classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({ top:0, behavior:'smooth' });
 }
 
 // ── VEHICLE DATA ──────────────────────────────────────────────────────────────
 const VEHICLE_DATA = {
-  "Acura":   { "ILX":["Base","Premium","Technology","A-Spec"], "MDX":["Base","Technology","SH-AWD","Type S"], "RDX":["Base","Technology","A-Spec","Advance"], "TL":["Base","Technology","SH-AWD"], "TSX":["Base","Technology","V6","Special Edition"] },
-  "Audi":    { "A3":["Premium","Premium Plus","Prestige","S3"], "A4":["Premium","Premium Plus","Prestige","S4"], "A6":["Premium","Premium Plus","Prestige","S6"], "Q3":["Premium","Premium Plus","Prestige"], "Q5":["Premium","Premium Plus","Prestige","SQ5"], "Q7":["Premium","Premium Plus","Prestige","SQ7"], "S4":["Premium","Premium Plus","Prestige"], "S5":["Premium","Premium Plus","Prestige","Sportback"], "TT":["Premium","Premium Plus","Prestige","TTS"] },
-  "BMW":     { "3 Series":["330i","330xi","M340i","M340xi","330e"], "5 Series":["530i","530xi","540i","540xi","M550i"], "7 Series":["740i","740xi","750i","M760i"], "M3":["Base","Competition","CS"], "M4":["Base","Competition","CSL"], "X3":["sDrive30i","xDrive30i","M40i","X3 M"], "X5":["sDrive40i","xDrive40i","xDrive50e","M60i","X5 M"], "X7":["xDrive40i","xDrive50i","M60i","Alpina XB7"] },
-  "Chevrolet": { "Camaro":["LS","LT","SS","ZL1","1LE"], "Colorado":["WT","LT","Z71","ZR2","Trail Boss"], "Corvette":["Stingray","Grand Sport","Z06","ZR1"], "Equinox":["L","LS","LT","Premier","RS"], "Silverado 1500":["WT","Custom","LT","RST","LTZ","High Country","Trail Boss","ZR2"], "Suburban":["LS","LT","RST","Premier","High Country","Z71"], "Tahoe":["LS","LT","RST","Premier","High Country","Z71"], "Traverse":["L","LS","LT","RS","Premier","High Country"] },
-  "Dodge":   { "Challenger":["SXT","GT","R/T","Scat Pack","Hellcat","Demon","Super Stock"], "Charger":["SXT","GT","R/T","Scat Pack","Hellcat","Daytona"], "Durango":["SXT","GT","Citadel","R/T","Hellcat"], "Ram 1500":["Tradesman","Big Horn","Rebel","Laramie","Longhorn","Limited","TRX"] },
-  "Ford":    { "Bronco":["Base","Big Bend","Black Diamond","Outer Banks","Badlands","Wildtrak","Everglades","Raptor"], "Explorer":["Base","XLT","Limited","Platinum","ST","Timberline","King Ranch"], "F-150":["Regular","XL","XLT","Lariat","King Ranch","Platinum","Limited","Raptor","Tremor"], "Mustang":["EcoBoost","GT","Mach 1","Shelby GT350","Shelby GT500","Dark Horse"], "Ranger":["XL","XLT","Lariat","Tremor","Raptor"], "Edge":["SE","SEL","Titanium","ST"], "Escape":["S","SE","SEL","Titanium","Plug-In Hybrid","ST-Line"] },
-  "GMC":     { "Sierra 1500":["Regular","SLE","SLT","AT4","Denali","Denali Ultimate"], "Terrain":["SL","SLE","SLT","AT4","Denali"], "Yukon":["SLE","SLT","AT4","Denali","Denali Ultimate"], "Canyon":["Elevation","AT4","Denali"] },
-  "Honda":   { "Accord":["LX","Sport","EX","EX-L","Touring","Hybrid"], "Civic":["LX","Sport","EX","EX-L","Touring","Si","Type R"], "CR-V":["LX","EX","EX-L","Touring","Hybrid","Sport"], "HR-V":["LX","Sport","EX","EX-L"], "Odyssey":["LX","EX","EX-L","Touring","Elite"], "Passport":["Sport","EX-L","Touring","Elite","TrailSport"], "Pilot":["Sport","EX-L","Touring","Elite","TrailSport","Black Edition"], "Ridgeline":["Sport","RTL","RTL-E","Black Edition","TrailSport"] },
-  "Hyundai": { "Elantra":["SE","SEL","Limited","N Line","N"], "Palisade":["SE","SEL","Limited","Calligraphy","XRT"], "Santa Fe":["SE","SEL","XRT","Limited","Calligraphy"], "Sonata":["SE","SEL","SEL Plus","Limited","N Line"], "Tucson":["SE","SEL","XRT","Limited","N Line","Hybrid"] },
-  "Jeep":    { "Cherokee":["Sport","Latitude","Altitude","Limited","Trailhawk","Overland"], "Grand Cherokee":["Laredo","Altitude","Limited","Trailhawk","Overland","Summit","SRT","Trackhawk"], "Wrangler":["Sport","Sport S","Sahara","Willys","Rubicon","392","4xe"], "Gladiator":["Sport","Sport S","Overland","Rubicon","Mojave"], "Renegade":["Sport","Latitude","Altitude","Limited","Trailhawk"] },
-  "Kia":     { "Optima":["LX","LXS","EX","SX","SX Limited"], "Sorento":["LX","S","EX","SX","SX-Prestige","X-Line"], "Soul":["LX","S","EX","GT-Line","Turbo"], "Sportage":["LX","EX","SX","X-Line","X-Pro"], "Telluride":["LX","S","EX","SX","X-Line","X-Pro","SX-Prestige"] },
-  "Land Rover": { "Defender":["90 S","90 SE","110 S","110 SE","110 HSE","110 X"], "Discovery":["S","SE","HSE","HSE Luxury","First Edition"], "Range Rover":["Base","SE","HSE","Autobiography","SV Autobiography"], "Range Rover Sport":["HSE","HSE Dynamic","Autobiography","SVR","First Edition"] },
-  "Lexus":   { "ES":["ES 250","ES 300h","ES 350","F Sport","Ultra Luxury"], "GX":["GX 460","Premium","Luxury","F Sport"], "IS":["IS 300","IS 350","IS 500","F Sport"], "LX":["LX 570","LX 600","Premium","Luxury","F Sport"], "RX":["RX 350","RX 350L","RX 350h","RX 500h","F Sport"] },
-  "Mazda":   { "CX-5":["Sport","Touring","Grand Touring","Carbon Edition","Grand Touring Reserve","Signature"], "CX-9":["Sport","Touring","Grand Touring","Carbon Edition","Signature"], "Mazda3":["Select","Preferred","Premium","Premium Plus","2.5 Turbo"], "Mazda6":["Sport","Touring","Grand Touring","Signature"], "MX-5 Miata":["Sport","Club","Grand Touring","RF Club","RF Grand Touring"] },
-  "Mercedes-Benz": { "C-Class":["C 300","C 300 4MATIC","AMG C 43","AMG C 63","AMG C 63 S"], "E-Class":["E 350","E 450","AMG E 53","AMG E 63 S"], "GLC":["GLC 300","GLC 300 4MATIC","AMG GLC 43","AMG GLC 63"], "GLE":["GLE 350","GLE 450","GLE 580","AMG GLE 53","AMG GLE 63 S"], "S-Class":["S 500","S 580","Maybach S 580","AMG S 63"] },
-  "Nissan":  { "370Z":["Base","Sport","Touring","NISMO"], "Altima":["S","SV","SR","SL","Platinum","Edition ONE"], "Frontier":["S","SV","PRO-4X","SL","PRO-X"], "Maxima":["S","SV","SR","SL","Platinum"], "Murano":["S","SV","SL","Platinum"], "Pathfinder":["S","SV","SL","Platinum","Rock Creek"], "Rogue":["S","SV","SL","Platinum","Sport","Rock Creek"], "Titan":["S","SV","PRO-4X","SL","Platinum Reserve"] },
-  "Porsche": { "911":["Carrera","Carrera S","Carrera 4","Carrera 4S","Targa 4","Targa 4S","GT3","Turbo","Turbo S"], "Cayenne":["Base","S","GTS","Turbo","Turbo GT","E-Hybrid"], "Macan":["Base","S","GTS","Turbo"], "Panamera":["Base","4","4S","GTS","Turbo","Turbo S E-Hybrid"] },
-  "Ram":     { "1500":["Tradesman","Big Horn","Rebel","Laramie","Longhorn","Limited","TRX"], "2500":["Tradesman","Big Horn","Laramie","Power Wagon","Limited","Longhorn"], "3500":["Tradesman","Big Horn","Laramie","Limited","Longhorn"] },
-  "Subaru":  { "Crosstrek":["Base","Premium","Sport","Limited","Touring","Wilderness"], "Forester":["Base","Premium","Sport","Limited","Touring","Wilderness"], "Impreza":["Base","Premium","Sport","Limited"], "Legacy":["Base","Premium","Sport","Limited","Touring","Outback 2.5i","Outback 3.6R"], "Outback":["Base","Premium","Sport","Limited","Touring","Wilderness","XT Premium","XT Touring","XT Limited","3.6R Limited","3.6R Touring"], "WRX":["Base","Premium","Limited","GT","STI","STI Limited","STI Sport"] },
-  "Tesla":   { "Model 3":["Standard Range","Long Range","Long Range AWD","Performance"], "Model S":["Long Range","Plaid"], "Model X":["Long Range","Plaid"], "Model Y":["Standard Range","Long Range","Long Range AWD","Performance"] },
-  "Toyota":  { "4Runner":["SR5","TRD Sport","TRD Off-Road","TRD Off-Road Premium","Limited","TRD Pro","Venture"], "Camry":["LE","SE","XSE","XLE","TRD","Hybrid LE","Hybrid SE","Hybrid XLE"], "Corolla":["L","LE","SE","XSE","XLE","Apex Edition","Hybrid","GR Corolla"], "FJ Cruiser":["Base","Trail Teams"], "Highlander":["L","LE","XLE","Limited","Platinum","XSE","Bronze Edition","Hybrid"], "Land Cruiser":["Base","Heritage Edition","1958"], "Prius":["L Eco","LE","XLE","Limited","Prime LE","Prime XLE","Prime Limited"], "RAV4":["LE","XLE","XLE Premium","TRD Off-Road","Adventure","Limited","Prime SE","Prime XSE"], "Sequoia":["SR5","TRD Sport","Limited","Platinum","TRD Pro","Capstone"], "Sienna":["LE","XSE","SE","XLE","Limited","Platinum"], "Tacoma":["SR","SR5","TRD Sport","TRD Off-Road","Limited","TRD Pro","Trail Edition"], "Tundra":["SR","SR5","Limited","Platinum","1794 Edition","TRD Pro","Capstone"] },
-  "Volkswagen": { "Golf":["S","SE","SEL","GTI S","GTI SE","GTI Autobahn","Golf R"], "Jetta":["S","Sport","SE","SEL","GLI S","GLI Autobahn","GLI 35th Anniversary"], "Passat":["S","SE","SEL","R-Line"], "Tiguan":["S","SE","SEL","SEL R-Line","SEL Premium","R-Line"], "Atlas":["S","SE","SE Technology","SEL","SEL Premium","Cross Sport"] },
-  "Volvo":   { "S60":["Momentum","R-Design","Inscription","Polestar Engineered","T8 Recharge"], "S90":["Momentum","R-Design","Inscription","T8 Recharge"], "XC40":["Momentum","R-Design","Inscription","Recharge"], "XC60":["Momentum","R-Design","Inscription","Polestar Engineered","T8 Recharge"], "XC90":["Momentum","R-Design","Inscription","Excellence","T8 Recharge"] }
+  "Acura":{"ILX":["Base","Premium","Technology","A-Spec"],"MDX":["Base","Technology","SH-AWD","Type S"],"RDX":["Base","Technology","A-Spec","Advance"],"TL":["Base","Technology","SH-AWD"],"TSX":["Base","Technology","V6","Special Edition"]},
+  "Audi":{"A3":["Premium","Premium Plus","Prestige","S3"],"A4":["Premium","Premium Plus","Prestige","S4"],"A6":["Premium","Premium Plus","Prestige","S6"],"Q3":["Premium","Premium Plus","Prestige"],"Q5":["Premium","Premium Plus","Prestige","SQ5"],"Q7":["Premium","Premium Plus","Prestige","SQ7"],"S4":["Premium","Premium Plus","Prestige"],"S5":["Premium","Premium Plus","Prestige","Sportback"],"TT":["Premium","Premium Plus","Prestige","TTS"]},
+  "BMW":{"3 Series":["330i","330xi","M340i","M340xi","330e"],"5 Series":["530i","530xi","540i","540xi","M550i"],"7 Series":["740i","740xi","750i","M760i"],"M3":["Base","Competition","CS"],"M4":["Base","Competition","CSL"],"X3":["sDrive30i","xDrive30i","M40i","X3 M"],"X5":["sDrive40i","xDrive40i","xDrive50e","M60i","X5 M"],"X7":["xDrive40i","xDrive50i","M60i","Alpina XB7"]},
+  "Chevrolet":{"Camaro":["LS","LT","SS","ZL1","1LE"],"Colorado":["WT","LT","Z71","ZR2","Trail Boss"],"Corvette":["Stingray","Grand Sport","Z06","ZR1"],"Equinox":["L","LS","LT","Premier","RS"],"Silverado 1500":["WT","Custom","LT","RST","LTZ","High Country","Trail Boss","ZR2"],"Suburban":["LS","LT","RST","Premier","High Country","Z71"],"Tahoe":["LS","LT","RST","Premier","High Country","Z71"],"Traverse":["L","LS","LT","RS","Premier","High Country"]},
+  "Dodge":{"Challenger":["SXT","GT","R/T","Scat Pack","Hellcat","Demon","Super Stock"],"Charger":["SXT","GT","R/T","Scat Pack","Hellcat","Daytona"],"Durango":["SXT","GT","Citadel","R/T","Hellcat"],"Ram 1500":["Tradesman","Big Horn","Rebel","Laramie","Longhorn","Limited","TRX"]},
+  "Ford":{"Bronco":["Base","Big Bend","Black Diamond","Outer Banks","Badlands","Wildtrak","Everglades","Raptor"],"Explorer":["Base","XLT","Limited","Platinum","ST","Timberline","King Ranch"],"F-150":["Regular","XL","XLT","Lariat","King Ranch","Platinum","Limited","Raptor","Tremor"],"Mustang":["EcoBoost","GT","Mach 1","Shelby GT350","Shelby GT500","Dark Horse"],"Ranger":["XL","XLT","Lariat","Tremor","Raptor"],"Edge":["SE","SEL","Titanium","ST"],"Escape":["S","SE","SEL","Titanium","Plug-In Hybrid","ST-Line"]},
+  "GMC":{"Sierra 1500":["Regular","SLE","SLT","AT4","Denali","Denali Ultimate"],"Terrain":["SL","SLE","SLT","AT4","Denali"],"Yukon":["SLE","SLT","AT4","Denali","Denali Ultimate"],"Canyon":["Elevation","AT4","Denali"]},
+  "Honda":{"Accord":["LX","Sport","EX","EX-L","Touring","Hybrid"],"Civic":["LX","Sport","EX","EX-L","Touring","Si","Type R"],"CR-V":["LX","EX","EX-L","Touring","Hybrid","Sport"],"HR-V":["LX","Sport","EX","EX-L"],"Odyssey":["LX","EX","EX-L","Touring","Elite"],"Passport":["Sport","EX-L","Touring","Elite","TrailSport"],"Pilot":["Sport","EX-L","Touring","Elite","TrailSport","Black Edition"],"Ridgeline":["Sport","RTL","RTL-E","Black Edition","TrailSport"]},
+  "Hyundai":{"Elantra":["SE","SEL","Limited","N Line","N"],"Palisade":["SE","SEL","Limited","Calligraphy","XRT"],"Santa Fe":["SE","SEL","XRT","Limited","Calligraphy"],"Sonata":["SE","SEL","SEL Plus","Limited","N Line"],"Tucson":["SE","SEL","XRT","Limited","N Line","Hybrid"]},
+  "Jeep":{"Cherokee":["Sport","Latitude","Altitude","Limited","Trailhawk","Overland"],"Grand Cherokee":["Laredo","Altitude","Limited","Trailhawk","Overland","Summit","SRT","Trackhawk"],"Wrangler":["Sport","Sport S","Sahara","Willys","Rubicon","392","4xe"],"Gladiator":["Sport","Sport S","Overland","Rubicon","Mojave"],"Renegade":["Sport","Latitude","Altitude","Limited","Trailhawk"]},
+  "Kia":{"Optima":["LX","LXS","EX","SX","SX Limited"],"Sorento":["LX","S","EX","SX","SX-Prestige","X-Line"],"Soul":["LX","S","EX","GT-Line","Turbo"],"Sportage":["LX","EX","SX","X-Line","X-Pro"],"Telluride":["LX","S","EX","SX","X-Line","X-Pro","SX-Prestige"]},
+  "Land Rover":{"Defender":["90 S","90 SE","110 S","110 SE","110 HSE","110 X"],"Discovery":["S","SE","HSE","HSE Luxury","First Edition"],"Range Rover":["Base","SE","HSE","Autobiography","SV Autobiography"],"Range Rover Sport":["HSE","HSE Dynamic","Autobiography","SVR","First Edition"]},
+  "Lexus":{"ES":["ES 250","ES 300h","ES 350","F Sport","Ultra Luxury"],"GX":["GX 460","Premium","Luxury","F Sport"],"IS":["IS 300","IS 350","IS 500","F Sport"],"LX":["LX 570","LX 600","Premium","Luxury","F Sport"],"RX":["RX 350","RX 350L","RX 350h","RX 500h","F Sport"]},
+  "Mazda":{"CX-5":["Sport","Touring","Grand Touring","Carbon Edition","Grand Touring Reserve","Signature"],"CX-9":["Sport","Touring","Grand Touring","Carbon Edition","Signature"],"Mazda3":["Select","Preferred","Premium","Premium Plus","2.5 Turbo"],"Mazda6":["Sport","Touring","Grand Touring","Signature"],"MX-5 Miata":["Sport","Club","Grand Touring","RF Club","RF Grand Touring"]},
+  "Mercedes-Benz":{"C-Class":["C 300","C 300 4MATIC","AMG C 43","AMG C 63","AMG C 63 S"],"E-Class":["E 350","E 450","AMG E 53","AMG E 63 S"],"GLC":["GLC 300","GLC 300 4MATIC","AMG GLC 43","AMG GLC 63"],"GLE":["GLE 350","GLE 450","GLE 580","AMG GLE 53","AMG GLE 63 S"],"S-Class":["S 500","S 580","Maybach S 580","AMG S 63"]},
+  "Nissan":{"370Z":["Base","Sport","Touring","NISMO"],"Altima":["S","SV","SR","SL","Platinum","Edition ONE"],"Frontier":["S","SV","PRO-4X","SL","PRO-X"],"Maxima":["S","SV","SR","SL","Platinum"],"Murano":["S","SV","SL","Platinum"],"Pathfinder":["S","SV","SL","Platinum","Rock Creek"],"Rogue":["S","SV","SL","Platinum","Sport","Rock Creek"],"Titan":["S","SV","PRO-4X","SL","Platinum Reserve"]},
+  "Porsche":{"911":["Carrera","Carrera S","Carrera 4","Carrera 4S","Targa 4","Targa 4S","GT3","Turbo","Turbo S"],"Cayenne":["Base","S","GTS","Turbo","Turbo GT","E-Hybrid"],"Macan":["Base","S","GTS","Turbo"],"Panamera":["Base","4","4S","GTS","Turbo","Turbo S E-Hybrid"]},
+  "Ram":{"1500":["Tradesman","Big Horn","Rebel","Laramie","Longhorn","Limited","TRX"],"2500":["Tradesman","Big Horn","Laramie","Power Wagon","Limited","Longhorn"],"3500":["Tradesman","Big Horn","Laramie","Limited","Longhorn"]},
+  "Subaru":{"Crosstrek":["Base","Premium","Sport","Limited","Touring","Wilderness"],"Forester":["Base","Premium","Sport","Limited","Touring","Wilderness"],"Impreza":["Base","Premium","Sport","Limited"],"Legacy":["Base","Premium","Sport","Limited","Touring","Outback 2.5i","Outback 3.6R"],"Outback":["Base","Premium","Sport","Limited","Touring","Wilderness","XT Premium","XT Touring","XT Limited","3.6R Limited","3.6R Touring"],"WRX":["Base","Premium","Limited","GT","STI","STI Limited","STI Sport"]},
+  "Tesla":{"Model 3":["Standard Range","Long Range","Long Range AWD","Performance"],"Model S":["Long Range","Plaid"],"Model X":["Long Range","Plaid"],"Model Y":["Standard Range","Long Range","Long Range AWD","Performance"]},
+  "Toyota":{"4Runner":["SR5","TRD Sport","TRD Off-Road","TRD Off-Road Premium","Limited","TRD Pro","Venture"],"Camry":["LE","SE","XSE","XLE","TRD","Hybrid LE","Hybrid SE","Hybrid XLE"],"Corolla":["L","LE","SE","XSE","XLE","Apex Edition","Hybrid","GR Corolla"],"FJ Cruiser":["Base","Trail Teams"],"Highlander":["L","LE","XLE","Limited","Platinum","XSE","Bronze Edition","Hybrid"],"Land Cruiser":["Base","Heritage Edition","1958"],"Prius":["L Eco","LE","XLE","Limited","Prime LE","Prime XLE","Prime Limited"],"RAV4":["LE","XLE","XLE Premium","TRD Off-Road","Adventure","Limited","Prime SE","Prime XSE"],"Sequoia":["SR5","TRD Sport","Limited","Platinum","TRD Pro","Capstone"],"Sienna":["LE","XSE","SE","XLE","Limited","Platinum"],"Tacoma":["SR","SR5","TRD Sport","TRD Off-Road","Limited","TRD Pro","Trail Edition"],"Tundra":["SR","SR5","Limited","Platinum","1794 Edition","TRD Pro","Capstone"]},
+  "Volkswagen":{"Golf":["S","SE","SEL","GTI S","GTI SE","GTI Autobahn","Golf R"],"Jetta":["S","Sport","SE","SEL","GLI S","GLI Autobahn","GLI 35th Anniversary"],"Passat":["S","SE","SEL","R-Line"],"Tiguan":["S","SE","SEL","SEL R-Line","SEL Premium","R-Line"],"Atlas":["S","SE","SE Technology","SEL","SEL Premium","Cross Sport"]},
+  "Volvo":{"S60":["Momentum","R-Design","Inscription","Polestar Engineered","T8 Recharge"],"S90":["Momentum","R-Design","Inscription","T8 Recharge"],"XC40":["Momentum","R-Design","Inscription","Recharge"],"XC60":["Momentum","R-Design","Inscription","Polestar Engineered","T8 Recharge"],"XC90":["Momentum","R-Design","Inscription","Excellence","T8 Recharge"]}
 };
 
-// ── DROPDOWN LOGIC ────────────────────────────────────────────────────────────
+// ── DROPDOWNS ──────────────────────────────────────────────────────────────────
 function populateYears() {
   var sel = document.getElementById('yearSelect');
   if (!sel) return;
   for (var y = 2025; y >= 1995; y--) {
-    var opt = document.createElement('option');
-    opt.value = y; opt.textContent = y;
-    sel.appendChild(opt);
+    var o = document.createElement('option'); o.value = y; o.textContent = y; sel.appendChild(o);
   }
 }
 
 function onYearChange() {
-  var makeEl = document.getElementById('makeSelect');
-  makeEl.innerHTML = '<option value="">Select Make</option>';
-  document.getElementById('modelSelect').innerHTML = '<option value="">Select Model</option>';
-  document.getElementById('trimSelect').innerHTML  = '<option value="">Select Trim</option>';
-  document.getElementById('engineSelect').innerHTML = '<option value="">Select Engine</option>';
-  makeEl.disabled = false;
-  document.getElementById('modelSelect').disabled  = true;
-  document.getElementById('trimSelect').disabled   = true;
-  document.getElementById('engineSelect').disabled = true;
+  var mk = document.getElementById('makeSelect');
+  mk.innerHTML = '<option value="">Select Make</option>';
+  ['modelSelect','trimSelect','engineSelect'].forEach(function(id) {
+    var el = document.getElementById(id);
+    el.innerHTML = '<option value="">Select ' + (id === 'engineSelect' ? 'Engine' : id === 'trimSelect' ? 'Trim' : 'Model') + '</option>';
+    el.disabled = true;
+  });
+  mk.disabled = false;
   Object.keys(VEHICLE_DATA).sort().forEach(function(m) {
-    var opt = document.createElement('option'); opt.value = m; opt.textContent = m; makeEl.appendChild(opt);
+    var o = document.createElement('option'); o.value = m; o.textContent = m; mk.appendChild(o);
   });
 }
 
 function onMakeChange() {
   var make = document.getElementById('makeSelect').value;
-  var modelEl = document.getElementById('modelSelect');
-  modelEl.innerHTML = '<option value="">Select Model</option>';
-  document.getElementById('trimSelect').innerHTML  = '<option value="">Select Trim</option>';
-  document.getElementById('engineSelect').innerHTML = '<option value="">Select Engine</option>';
-  document.getElementById('trimSelect').disabled   = true;
-  document.getElementById('engineSelect').disabled = true;
-  if (!make || !VEHICLE_DATA[make]) { modelEl.disabled = true; return; }
-  modelEl.disabled = false;
+  var mdl = document.getElementById('modelSelect');
+  mdl.innerHTML = '<option value="">Select Model</option>';
+  ['trimSelect','engineSelect'].forEach(function(id) {
+    var el = document.getElementById(id);
+    el.innerHTML = '<option value="">Select ' + (id === 'engineSelect' ? 'Engine' : 'Trim') + '</option>';
+    el.disabled = true;
+  });
+  if (!make || !VEHICLE_DATA[make]) { mdl.disabled = true; return; }
+  mdl.disabled = false;
   Object.keys(VEHICLE_DATA[make]).sort().forEach(function(m) {
-    var opt = document.createElement('option'); opt.value = m; opt.textContent = m; modelEl.appendChild(opt);
+    var o = document.createElement('option'); o.value = m; o.textContent = m; mdl.appendChild(o);
   });
 }
 
 function onModelChange() {
   var make = document.getElementById('makeSelect').value;
   var model = document.getElementById('modelSelect').value;
-  var trimEl = document.getElementById('trimSelect');
-  trimEl.innerHTML = '<option value="">Select Trim (optional)</option>';
-  document.getElementById('engineSelect').innerHTML = '<option value="">Select Engine</option>';
+  var tr = document.getElementById('trimSelect');
+  tr.innerHTML = '<option value="">Select Trim (optional)</option>';
+  document.getElementById('engineSelect').innerHTML = '<option value="">Select Engine (optional)</option>';
   document.getElementById('engineSelect').disabled = true;
-  if (!make || !model || !VEHICLE_DATA[make]?.[model]) { trimEl.disabled = true; return; }
-  trimEl.disabled = false;
+  if (!make || !model || !VEHICLE_DATA[make]?.[model]) { tr.disabled = true; return; }
+  tr.disabled = false;
   (VEHICLE_DATA[make][model] || []).forEach(function(t) {
-    var opt = document.createElement('option'); opt.value = t; opt.textContent = t; trimEl.appendChild(opt);
+    var o = document.createElement('option'); o.value = t; o.textContent = t; tr.appendChild(o);
   });
 }
 
-// Dynamic engine list — AI-powered, fetched from server
 async function onTrimChange() {
-  var make  = document.getElementById('makeSelect').value;
+  var year = document.getElementById('yearSelect').value;
+  var make = document.getElementById('makeSelect').value;
   var model = document.getElementById('modelSelect').value;
-  var trim  = document.getElementById('trimSelect').value;
-  var year  = document.getElementById('yearSelect').value;
-  var engEl = document.getElementById('engineSelect');
-
-  engEl.innerHTML = '<option value="">Loading engines...</option>';
-  engEl.disabled = true;
-
-  if (!make || !model || !trim) {
-    engEl.innerHTML = '<option value="">Select Engine (optional)</option>';
-    return;
-  }
-
+  var trim = document.getElementById('trimSelect').value;
+  var eng = document.getElementById('engineSelect');
+  eng.innerHTML = '<option value="">Loading engines...</option>';
+  eng.disabled = true;
+  if (!make || !model || !trim) { eng.innerHTML = '<option value="">Select Engine (optional)</option>'; return; }
   try {
-    const res = await fetch('/api/engines', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ year, make, model, trim })
-    });
-    const data = await res.json();
-    engEl.innerHTML = '<option value="">Select Engine (optional)</option>';
+    var res = await fetch('/api/engines', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({year, make, model, trim}) });
+    var data = await res.json();
+    eng.innerHTML = '<option value="">Select Engine (optional)</option>';
     if (data.engines && data.engines.length > 0) {
-      data.engines.forEach(function(e) {
-        var opt = document.createElement('option'); opt.value = e; opt.textContent = e; engEl.appendChild(opt);
-      });
-      engEl.disabled = false;
+      data.engines.forEach(function(e) { var o = document.createElement('option'); o.value = e; o.textContent = e; eng.appendChild(o); });
+      eng.disabled = false;
     } else {
-      engEl.innerHTML = '<option value="">Engine info not available</option>';
+      eng.innerHTML = '<option value="">Engine info unavailable</option>';
     }
-  } catch(err) {
-    engEl.innerHTML = '<option value="">Could not load engines</option>';
-    engEl.disabled = true;
+  } catch(e) {
+    eng.innerHTML = '<option value="">Could not load engines</option>';
   }
 }
 
 populateYears();
 
-// ── REPORT LOGIC ──────────────────────────────────────────────────────────────
-let currentReport = null;
+// ── REPORT STATE ──────────────────────────────────────────────────────────────
+var currentReport = null;
 
 function resetToSearch() {
   document.getElementById('search-wrap').style.display = 'block';
@@ -1025,74 +794,61 @@ function resetToSearch() {
   currentReport = null;
 }
 
-function showLoading() {
-  document.getElementById('search-wrap').style.display = 'none';
-  document.getElementById('loading').style.display = 'block';
-  document.getElementById('error-section').style.display = 'none';
-  document.getElementById('report-section').style.display = 'none';
-}
-
-function showReport() {
-  document.getElementById('search-wrap').style.display = 'none';
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('error-section').style.display = 'none';
-  document.getElementById('report-section').style.display = 'block';
-}
-
-function showError(msg) {
-  document.getElementById('search-wrap').style.display = 'none';
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('error-section').style.display = 'block';
-  document.getElementById('report-section').style.display = 'none';
-  document.getElementById('error-msg').textContent = msg || 'Something went wrong. Please try again.';
-}
-
 function getScoreColor(s) {
-  if (s >= 75) return '#22C55E';
-  if (s >= 60) return '#FBBF24';
-  return '#EF4444';
+  if (s >= 90) return '#4CAF72';
+  if (s >= 75) return '#7ac95a';
+  if (s >= 60) return '#D4A843';
+  if (s >= 45) return '#d4824a';
+  return '#C85A5A';
 }
 
-function getVerdictClass(v) {
-  if (!v) return 'gas';
-  v = v.toUpperCase();
-  if (v === 'GAS') return 'gas';
-  if (v.includes('HARD') || v === 'PASS' || v === 'AVOID') return 'avoid';
-  return 'caution';
+function getVerdictClass(score) {
+  if (score >= 90) return 'excellent';
+  if (score >= 75) return 'good';
+  if (score >= 60) return 'caution';
+  if (score >= 45) return 'risky';
+  return 'walkaway';
 }
 
 async function runReport() {
-  const year   = document.getElementById('yearSelect').value;
-  const make   = document.getElementById('makeSelect').value;
-  const model  = document.getElementById('modelSelect').value;
-  const trim   = document.getElementById('trimSelect').value;
-  const engine = document.getElementById('engineSelect').value;
-  const mileage = document.getElementById('mileage').value.trim();
-  const vin    = document.getElementById('vin').value.trim();
+  var year   = document.getElementById('yearSelect').value;
+  var make   = document.getElementById('makeSelect').value;
+  var model  = document.getElementById('modelSelect').value;
+  var trim   = document.getElementById('trimSelect').value;
+  var engine = document.getElementById('engineSelect').value;
+  var mileage= document.getElementById('mileage').value.trim();
+  var vin    = document.getElementById('vin').value.trim();
 
   if (!vin && (!year || !make || !model)) {
     alert('Please enter a VIN, or select at least Year, Make, and Model.');
     return;
   }
 
-  showLoading();
-  const label = [year, make, model, trim].filter(Boolean).join(' ');
+  document.getElementById('search-wrap').style.display = 'none';
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('error-section').style.display = 'none';
+  document.getElementById('report-section').style.display = 'none';
+
+  var label = [year, make, model, trim].filter(Boolean).join(' ');
   animateLoading(label);
 
   try {
-    const res = await fetch('/api/report', {
+    var res = await fetch('/api/report', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ year, make, model, trim, engine: (engine && engine !== 'unknown') ? engine : '', mileage, vin })
     });
-    const data = await res.json();
+    var data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Unknown error');
     currentReport = data.report;
     renderReport(data.report);
-    showReport();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('report-section').style.display = 'block';
+    window.scrollTo({ top:0, behavior:'smooth' });
   } catch(err) {
-    showError(err.message);
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('error-section').style.display = 'block';
+    document.getElementById('error-msg').textContent = err.message || 'Something went wrong. Please try again.';
   }
 }
 
@@ -1107,21 +863,20 @@ function animateLoading(label) {
   document.getElementById('progressPct').textContent = '0';
 
   var steps = [
-    { src:'reddit',    status:'Scanning threads...',       action:'Reading <strong>r/cars</strong>, <strong>r/MechanicAdvice</strong>, and model-specific subreddits...', pct:8 },
-    { src:'reddit',    done:true,                          action:'Owner experiences and known issues collected from Reddit.', pct:22 },
-    { src:'cardriver', status:'Pulling review data...',    action:'Checking <strong>Car and Driver</strong> expert reviews and long-term test data...', pct:30 },
-    { src:'cardriver', done:true,                          action:'Expert review data pulled.', pct:40 },
-    { src:'consumer',  status:'Checking reliability...',   action:'Pulling <strong>Consumer Reports</strong> reliability ratings...', pct:48 },
-    { src:'consumer',  done:true,                          action:'Reliability data collected.', pct:56 },
-    { src:'edmunds',   status:'Checking market prices...', action:'Analyzing <strong>market pricing</strong> and fair value ranges...', pct:63 },
-    { src:'edmunds',   done:true,                          action:'Fair market range calculated.', pct:70 },
-    { src:'forums',    status:'Reading owner reports...',  action:'Scanning <strong>owner forums</strong> for real-world maintenance patterns...', pct:76 },
-    { src:'forums',    done:true,                          action:'Owner feedback analyzed.', pct:82 },
-    { src:'ai',        status:'Synthesizing report...',    action:'<strong>AI is now synthesizing</strong> all sources into your report...', pct:90 },
-    { src:'ai',        done:true,                          action:'Report complete. Loading your results...', pct:99 },
+    {src:'reddit',    status:'Scanning threads...',      action:'Reading <strong>r/cars</strong>, <strong>r/MechanicAdvice</strong>, and model-specific communities...', pct:8},
+    {src:'reddit',    done:true,                         action:'Owner experiences and known issues collected.', pct:22},
+    {src:'cardriver', status:'Pulling review data...',   action:'Checking <strong>Car and Driver</strong> expert reviews and long-term test data...', pct:30},
+    {src:'cardriver', done:true,                         action:'Expert review data pulled.', pct:40},
+    {src:'consumer',  status:'Checking reliability...',  action:'Pulling <strong>Consumer Reports</strong> reliability ratings and owner satisfaction data...', pct:48},
+    {src:'consumer',  done:true,                         action:'Reliability data collected.', pct:56},
+    {src:'edmunds',   status:'Checking market value...', action:'Analyzing <strong>market pricing</strong> and fair value for this vehicle at this mileage...', pct:63},
+    {src:'edmunds',   done:true,                         action:'Fair market range calculated.', pct:70},
+    {src:'forums',    status:'Reading owner reports...', action:'Scanning <strong>owner forums</strong> for real-world maintenance and failure patterns...', pct:76},
+    {src:'forums',    done:true,                         action:'Owner feedback analyzed.', pct:82},
+    {src:'ai',        status:'Synthesizing...',          action:'<strong>Building your assessment</strong> from all collected sources...', pct:90},
+    {src:'ai',        done:true,                         action:'Assessment complete. Loading results...', pct:99},
   ];
   var delays = [0,2200,3000,4400,5200,6800,7600,9200,10000,11800,12600,16000];
-
   steps.forEach(function(step, i) {
     setTimeout(function() {
       document.getElementById('progressFill').style.width = step.pct + '%';
@@ -1136,7 +891,7 @@ function animateLoading(label) {
 }
 
 function renderReport(r) {
-  var vc = getVerdictClass(r.verdict);
+  var vc = getVerdictClass(r.overallScore);
   document.getElementById('verdictBanner').className = 'verdict-banner ' + vc;
   document.getElementById('verdictTag').textContent = r.verdict;
   document.getElementById('verdictVehicle').textContent = r.vehicle + (r.mileage && r.mileage !== 'Not specified' ? ' · ' + Number(r.mileage).toLocaleString() + ' mi' : '');
@@ -1145,104 +900,103 @@ function renderReport(r) {
   var score = r.overallScore;
   var arc = document.getElementById('scoreArc');
   arc.style.stroke = getScoreColor(score);
-  setTimeout(function() { arc.style.strokeDashoffset = 295.3 - (score/100)*295.3; }, 300);
+  setTimeout(function() { arc.style.strokeDashoffset = 289 - (score/100)*289; }, 300);
   var cur = 0, numEl = document.getElementById('scoreNum');
   var iv = setInterval(function() { cur = Math.min(cur+2, score); numEl.textContent = cur; if(cur>=score) clearInterval(iv); }, 20);
 
   document.getElementById('summaryText').textContent = r.summary;
 
-  var labels = { reliability:'Reliability', costToOwn:'Cost to Own', drivability:'Drivability', partsAvailability:'Parts Availability', communityRating:'Community Rating' };
+  var labels = {reliability:'Reliability',costToOwn:'Cost to Own',drivability:'Drivability',partsAvailability:'Parts Availability',communityRating:'Community Rating'};
   document.getElementById('scoreBars').innerHTML = Object.entries(r.scores||{}).map(function([k,v]) {
-    return '<div class="sbar-row"><div class="sbar-header"><span class="sbar-name">' + (labels[k]||k) + '</span><span class="sbar-num">' + v + '/100</span></div><div class="sbar-track"><div class="sbar-fill" data-w="' + v + '" style="background:' + getScoreColor(v) + '"></div></div><div class="sbar-detail">' + (r.scoreExplanations?.[k]||'') + '</div></div>';
+    return '<div class="sbar"><div class="sbar-hd"><span class="sbar-name">'+(labels[k]||k)+'</span><span class="sbar-num">'+v+'/100</span></div><div class="sbar-track"><div class="sbar-fill" data-w="'+v+'" style="background:'+getScoreColor(v)+'"></div></div><div class="sbar-detail">'+(r.scoreExplanations?.[k]||'')+'</div></div>';
   }).join('');
   setTimeout(function() { document.querySelectorAll('.sbar-fill').forEach(function(el) { el.style.width = el.dataset.w + '%'; }); }, 200);
 
   var mb = r.mileageBreakdown;
   if (mb) {
-    document.getElementById('mileageCtx').textContent = mb.currentMileageContext || '';
-    document.getElementById('servicesDue').innerHTML = (mb.servicesDueByNow||[]).map(function(s) { return '<div class="mcol-item">' + s + '</div>'; }).join('');
-    document.getElementById('servicesUpcoming').innerHTML = (mb.upcomingServices||[]).map(function(s) { return '<div class="mcol-item">' + s + '</div>'; }).join('');
-    document.getElementById('milestonesList').innerHTML = (mb.mileageMilestones||[]).map(function(m) { return '<div class="milestone-row"><span class="milestone-mi">' + m.mileage + '</span><span class="milestone-ev">' + m.event + '</span></div>'; }).join('');
+    document.getElementById('miCtx').textContent = mb.currentMileageContext || '';
+    document.getElementById('servicesDue').innerHTML = (mb.servicesDueByNow||[]).map(function(s) { return '<div class="mi-item">'+s+'</div>'; }).join('');
+    document.getElementById('servicesUpcoming').innerHTML = (mb.upcomingServices||[]).map(function(s) { return '<div class="mi-item">'+s+'</div>'; }).join('');
+    document.getElementById('milestonesList').innerHTML = (mb.mileageMilestones||[]).map(function(m) { return '<div class="milestone-row"><span class="milestone-mi">'+m.mileage+'</span><span class="milestone-ev">'+m.event+'</span></div>'; }).join('');
     document.getElementById('mileageCard').style.display = 'block';
   } else {
     document.getElementById('mileageCard').style.display = 'none';
   }
 
   document.getElementById('issuesList').innerHTML = (r.knownIssues||[]).map(function(i) {
-    return '<div class="issue-card"><span class="sev-badge sev-' + i.severity + '">' + i.severity + '</span><div class="issue-body"><div class="issue-name">' + i.issue + '</div><div class="issue-meta">' + (i.mileage||'') + '</div><div class="issue-detail">' + i.detail + '</div>' + (i.source ? '<div class="issue-source">Source: ' + i.source + '</div>' : '') + '</div></div>';
+    return '<div class="issue-card"><span class="sev sev-'+i.severity+'">'+i.severity+'</span><div class="issue-body"><div class="issue-name">'+i.issue+'</div><div class="issue-meta">'+(i.mileage||'')+'</div><div class="issue-detail">'+i.detail+'</div>'+(i.source?'<div class="issue-source">Source: '+i.source+'</div>':'')+'</div></div>';
   }).join('');
 
   document.getElementById('maintList').innerHTML = (r.maintenanceAlerts||[]).map(function(m) {
-    return '<div class="maint-item"><div><div class="maint-name">' + m.item + '</div><div class="maint-interval">' + m.interval + '</div></div><div class="maint-cost">' + m.estimatedCost + '</div><div class="maint-detail">' + m.detail + '</div></div>';
+    return '<div class="maint-item"><div><div class="maint-name">'+m.item+'</div><div class="maint-int">'+m.interval+'</div></div><div class="maint-cost">'+m.estimatedCost+'</div><div class="maint-det">'+m.detail+'</div></div>';
   }).join('');
 
   document.getElementById('commList').innerHTML = (r.whatPeopleAreSaying||[]).map(function(c) {
-    return '<div class="comm-card ' + c.sentiment + '"><div class="comm-source">' + c.source + '<span class="sent-tag sent-' + c.sentiment + '">' + c.sentiment + '</span></div><div class="comm-quote">"' + c.quote + '"</div>' + (c.link ? '<a class="comm-link" href="' + c.link + '" target="_blank" rel="noopener">View Thread ↗</a>' : '') + '</div>';
+    return '<div class="comm-card '+(c.sentiment||'')+'"><div class="comm-src">'+c.source+'<span class="sent sent-'+c.sentiment+'">'+c.sentiment+'</span></div><div class="comm-quote">"'+c.quote+'"</div>'+(c.link?'<a class="comm-link" href="'+c.link+'" target="_blank" rel="noopener">View source ↗</a>':'')+'</div>';
   }).join('');
 
   var m = r.fairMarketRange;
-  document.getElementById('marketCols').innerHTML = '<div class="market-col"><div class="market-col-label">Low End</div><div class="market-col-price">' + m.low + '</div></div><div class="market-col fair"><div class="market-col-label">Fair Price</div><div class="market-col-price">' + m.mid + '</div></div><div class="market-col"><div class="market-col-label">High End</div><div class="market-col-price">' + m.high + '</div></div>';
+  document.getElementById('marketCols').innerHTML = '<div class="market-col"><div class="market-col-lbl">Low End</div><div class="market-col-price">'+m.low+'</div></div><div class="market-col fair"><div class="market-col-lbl">Fair Value</div><div class="market-col-price">'+m.mid+'</div></div><div class="market-col"><div class="market-col-lbl">High End</div><div class="market-col-price">'+m.high+'</div></div>';
   document.getElementById('marketNote').textContent = m.note || '';
   document.getElementById('genNotes').textContent = r.generationNotes || '';
-  document.getElementById('buyingTips').innerHTML = (r.buyingTips||[]).map(function(t) { return '<div class="tip-item">' + t + '</div>'; }).join('');
-  document.getElementById('inspectList').innerHTML = (r.thingsToInspect||[]).map(function(t) { return '<div class="tip-item">' + t + '</div>'; }).join('');
-  document.getElementById('altList').innerHTML = (r.alternativesToConsider||[]).map(function(a) { return '<div class="alt-item"><span class="alt-vehicle">' + a.vehicle + '</span><span class="alt-reason">' + a.reason + '</span></div>'; }).join('');
+  document.getElementById('buyingTips').innerHTML = (r.buyingTips||[]).map(function(t) { return '<div class="tip-item">'+t+'</div>'; }).join('');
+  document.getElementById('inspectList').innerHTML = (r.thingsToInspect||[]).map(function(t) { return '<div class="tip-item">'+t+'</div>'; }).join('');
+  document.getElementById('altList').innerHTML = (r.alternativesToConsider||[]).map(function(a) { return '<div class="alt-item"><span class="alt-vehicle">'+a.vehicle+'</span><span class="alt-reason">'+a.reason+'</span></div>'; }).join('');
 }
 
-// ── PAYMENTS (scaffold — activate when Stripe is ready) ───────────────────────
-function handlePurchase(plan) {
-  alert('Payments coming soon! All reports are free during beta. Check back shortly.');
-}
-
-// ── CONTACT FORM ──────────────────────────────────────────────────────────────
+// ── FORMS ─────────────────────────────────────────────────────────────────────
 async function submitContact() {
-  var name     = document.getElementById('c-name').value.trim();
-  var email    = document.getElementById('c-email').value.trim();
-  var vehicle  = document.getElementById('c-vehicle').value.trim();
-  var situation= document.getElementById('c-situation').value;
-  var message  = document.getElementById('c-message').value.trim();
-
+  var email = document.getElementById('c-email').value.trim();
+  var vehicle = document.getElementById('c-vehicle').value.trim();
+  var message = document.getElementById('c-message').value.trim();
   if (!email || !vehicle || !message) { alert('Please fill in your email, vehicle, and message.'); return; }
-
   var btn = document.querySelector('#contact-form-wrap .submit-btn');
   btn.disabled = true; btn.textContent = 'Sending...';
-
   try {
-    await fetch('/api/contact', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ name, email, vehicle, situation, message, type:'contact' })
-    });
+    await fetch('/api/contact', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'contact', name: document.getElementById('c-name').value, email, vehicle, situation: document.getElementById('c-situation').value, message }) });
     document.getElementById('contact-form-wrap').style.display = 'none';
     document.getElementById('contact-success').style.display = 'block';
-  } catch(e) {
-    btn.disabled = false; btn.textContent = 'Send My Question →';
-    alert('Something went wrong. Please try again.');
-  }
+  } catch(e) { btn.disabled = false; btn.textContent = 'Send My Question →'; alert('Something went wrong. Please try again.'); }
 }
 
-// ── SUPPORT FORM ──────────────────────────────────────────────────────────────
 async function submitSupport() {
-  var email   = document.getElementById('s-email').value.trim();
-  var vehicle = document.getElementById('s-vehicle').value.trim();
-  var issue   = document.getElementById('s-issue').value;
-  var message = document.getElementById('s-message').value.trim();
-
-  if (!email || !issue) { alert('Please fill in your email and describe the issue.'); return; }
-
+  var email = document.getElementById('s-email').value.trim();
+  var issue = document.getElementById('s-issue').value;
+  if (!email || !issue) { alert('Please fill in your email and select the issue type.'); return; }
   var btn = document.querySelector('#support-form-wrap .submit-btn');
   btn.disabled = true; btn.textContent = 'Submitting...';
-
   try {
-    await fetch('/api/contact', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ email, vehicle, issue, message, type:'support' })
-    });
+    await fetch('/api/contact', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'support', email, vehicle: document.getElementById('s-vehicle').value, issue, message: document.getElementById('s-message').value }) });
     document.getElementById('support-form-wrap').style.display = 'none';
     document.getElementById('support-success').style.display = 'block';
+  } catch(e) { btn.disabled = false; btn.textContent = 'Submit →'; alert('Something went wrong. Please try again.'); }
+}
+
+// ── CONSULTATION FORM ────────────────────────────────────────────────────────
+async function submitConsult() {
+  var email    = document.getElementById('co-email').value.trim();
+  var situation= document.getElementById('co-situation').value;
+  var message  = document.getElementById('co-message').value.trim();
+  if (!email || !situation || !message) { alert('Please fill in your email, situation, and message.'); return; }
+  var btn = document.querySelector('#consult-form-wrap .submit-btn');
+  btn.disabled = true; btn.textContent = 'Sending...';
+  try {
+    await fetch('/api/contact', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        type:'consultation',
+        name: document.getElementById('co-name').value,
+        email,
+        situation,
+        budget: document.getElementById('co-budget').value,
+        timeline: document.getElementById('co-timeline').value,
+        message
+      })
+    });
+    document.getElementById('consult-form-wrap').style.display = 'none';
+    document.getElementById('consult-success').style.display = 'block';
   } catch(e) {
-    btn.disabled = false; btn.textContent = 'Submit Report →';
+    btn.disabled = false; btn.textContent = 'Send My Request →';
     alert('Something went wrong. Please try again.');
   }
 }
@@ -1251,124 +1005,121 @@ async function submitSupport() {
 async function downloadPDF() {
   if (!currentReport) return;
   var r = currentReport;
-  var { jsPDF } = window.jspdf;
-  var doc = new jsPDF({ unit:'pt', format:'letter' });
+  var {jsPDF} = window.jspdf;
+  var doc = new jsPDF({unit:'pt',format:'letter'});
   var PW = doc.internal.pageSize.getWidth(), PH = doc.internal.pageSize.getHeight();
-  var ML = 48, MR = 48, CW = PW - ML - MR;
+  var ML = 48, CW = PW - 96;
   var y = 48;
-  var ORANGE = [232,93,4], DARK=[15,15,15], MED=[90,90,90], LIGHT=[160,160,160], RULE=[220,220,220];
-  var GREEN=[52,197,94], AMBER=[251,191,36], RED=[239,68,68];
-  var verdictColors = { GAS: GREEN, 'HARD PASS': RED, 'GAS/PASS': AMBER, CAUTION: AMBER, AVOID: RED };
-  var vc = verdictColors[(r.verdict||'').toUpperCase()] || GREEN;
+  var WALNUT=[44,36,22], GOLD=[196,148,72], MED=[120,110,90], LIGHT=[170,160,140], RULE=[210,200,185];
+  var GOOD=[76,175,114], CAUTION=[212,168,67], AVOID=[200,90,90];
 
-  var checkPage = function(n) { if (y + (n||20) > PH - 40) { doc.addPage(); y = 48; } };
-  var rule = function() { doc.setDrawColor(...RULE); doc.setLineWidth(0.5); doc.line(ML, y, PW-MR, y); y += 12; };
-  var txt = function(str, size, color, bold, x, mw) {
-    if (!str) return;
-    doc.setFontSize(size); doc.setTextColor(...color);
-    doc.setFont('helvetica', bold ? 'bold' : 'normal');
-    var lines = doc.splitTextToSize(String(str), mw||CW);
-    lines.forEach(function(l) { checkPage(size*1.5); doc.text(l, x||ML, y); y += size*1.45; });
-  };
-  var secHeader = function(title) {
-    checkPage(40); y += 8;
-    doc.setFillColor(245,245,245); doc.roundedRect(ML, y-14, CW, 22, 3, 3, 'F');
-    doc.setFontSize(9.5); doc.setFont('helvetica','bold'); doc.setTextColor(...DARK);
-    doc.text('// ' + title.toUpperCase(), ML+8, y+2); y += 16; rule();
-  };
+  function scoreCol(s) { return s>=90?GOOD:s>=75?[122,201,90]:s>=60?CAUTION:s>=45?[212,130,74]:AVOID; }
+  function verdictCol(s) { return s>=90?GOOD:s>=75?[122,201,90]:s>=60?CAUTION:s>=45?[212,130,74]:AVOID; }
+  function checkPage(n) { if(y+(n||20)>PH-40){doc.addPage();y=48;} }
+  function rule() { doc.setDrawColor(...RULE);doc.setLineWidth(0.5);doc.line(ML,y,PW-ML,y);y+=12; }
+  function txt(str,size,color,bold,x,mw) {
+    if(!str)return;
+    doc.setFontSize(size);doc.setTextColor(...color);doc.setFont('helvetica',bold?'bold':'normal');
+    doc.splitTextToSize(String(str),mw||CW).forEach(function(l){checkPage(size*1.5);doc.text(l,x||ML,y);y+=size*1.45;});
+  }
+  function sec(title) {
+    checkPage(40);y+=8;
+    doc.setFillColor(245,242,235);doc.roundedRect(ML,y-13,CW,21,3,3,'F');
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(...WALNUT);
+    doc.text('// '+title.toUpperCase(),ML+8,y+2);y+=16;rule();
+  }
 
-  // Header bar
-  doc.setFillColor(...DARK); doc.rect(0,0,PW,68,'F');
-  doc.setFillColor(...ORANGE); doc.rect(0,64,PW,4,'F');
-  doc.setFontSize(22); doc.setFont('helvetica','bold'); doc.setTextColor(255,255,255);
-  doc.text('YOUR DIGITAL MECHANIC', ML, 40);
-  doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(...ORANGE);
-  doc.text('KNOW BEFORE YOU BUY. EVERY TIME.', ML, 56);
-  y = 92;
+  // Header
+  doc.setFillColor(...WALNUT);doc.rect(0,0,PW,66,'F');
+  doc.setFillColor(...GOLD);doc.rect(0,62,PW,4,'F');
+  doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(...GOLD);
+  doc.text('DRIVE COUNSELOR',ML,30);
+  doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(160,140,100);
+  doc.text('AI-POWERED CAR GUIDANCE · CONFIDENT DECISIONS. EVERY DRIVE.',ML,46);
+  y=88;
 
   // Verdict box
-  doc.setFillColor(248,248,248); doc.roundedRect(ML,y,CW,88,4,4,'F');
-  doc.setDrawColor(...RULE); doc.roundedRect(ML,y,CW,88,4,4,'S');
-  doc.setFontSize(30); doc.setFont('helvetica','bold'); doc.setTextColor(...vc);
-  doc.text(r.verdict||'GAS', ML+16, y+36);
-  doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(...DARK);
-  doc.text(r.vehicle + (r.mileage && r.mileage !== 'Not specified' ? ' · ' + Number(r.mileage).toLocaleString() + ' mi' : ''), ML+16, y+54);
-  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(...MED);
-  var reasonLines = doc.splitTextToSize(r.verdictReason||'', CW-130);
-  reasonLines.forEach(function(l,i) { doc.text(l, ML+16, y+70+i*12); });
+  var vc = verdictCol(r.overallScore);
+  doc.setFillColor(248,245,238);doc.roundedRect(ML,y,CW,88,4,4,'F');
+  doc.setDrawColor(...RULE);doc.roundedRect(ML,y,CW,88,4,4,'S');
+  doc.setFontSize(28);doc.setFont('helvetica','bold');doc.setTextColor(...vc);
+  doc.text(r.verdict||'Good Buy',ML+16,y+34);
+  doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(...WALNUT);
+  doc.text(r.vehicle+(r.mileage&&r.mileage!=='Not specified'?' · '+Number(r.mileage).toLocaleString()+' mi':''),ML+16,y+52);
+  doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor(...MED);
+  var rl=doc.splitTextToSize(r.verdictReason||'',CW-130);
+  rl.forEach(function(l,i){doc.text(l,ML+16,y+68+i*11);});
 
   // Score circle
-  var cx = PW-MR-52, score = r.overallScore;
-  var sc = score>=75?GREEN:score>=60?AMBER:RED;
-  doc.setDrawColor(...sc); doc.setLineWidth(2.5); doc.circle(cx,y+44,28,'S');
-  doc.setFontSize(20); doc.setFont('helvetica','bold'); doc.setTextColor(...sc);
-  doc.text(String(score), cx, y+51, {align:'center'});
-  doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(...LIGHT);
-  doc.text('/100', cx, y+63, {align:'center'});
-  doc.text('SCORE', cx, y+80, {align:'center'});
-  y += 100;
+  var cx=PW-ML-52, sc=r.overallScore;
+  doc.setDrawColor(...vc);doc.setLineWidth(2.5);doc.circle(cx,y+44,28,'S');
+  doc.setFontSize(19);doc.setFont('helvetica','bold');doc.setTextColor(...vc);
+  doc.text(String(sc),cx,y+51,{align:'center'});
+  doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...LIGHT);
+  doc.text('/100',cx,y+63,{align:'center'});
+  doc.text('SCORE',cx,y+80,{align:'center'});
+  y+=100;
 
-  secHeader('The Verdict'); txt(r.summary, 9.5, MED);  y+=6;
-  secHeader('Score Breakdown');
-  var slabels = {reliability:'Reliability',costToOwn:'Cost to Own',drivability:'Drivability',partsAvailability:'Parts Availability',communityRating:'Community Rating'};
-  Object.entries(r.scores||{}).forEach(function([k,v]) {
+  sec('Our Assessment');txt(r.summary,9.5,MED);y+=6;
+
+  sec('Score Breakdown');
+  var sl={reliability:'Reliability',costToOwn:'Cost to Own',drivability:'Drivability',partsAvailability:'Parts Availability',communityRating:'Community Rating'};
+  Object.entries(r.scores||{}).forEach(function([k,v]){
     checkPage(36);
-    doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...DARK);
-    doc.text((slabels[k]||k) + ': ' + v + '/100', ML, y);
-    var bx=ML+145,by=y-9,bw=CW-145,bh=5;
-    doc.setFillColor(225,225,225); doc.roundedRect(bx,by,bw,bh,2,2,'F');
-    var bc=v>=75?GREEN:v>=60?AMBER:RED;
-    doc.setFillColor(...bc); doc.roundedRect(bx,by,bw*(v/100),bh,2,2,'F');
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(...WALNUT);
+    doc.text((sl[k]||k)+': '+v+'/100',ML,y);
+    var bx=ML+148,by=y-9,bw=CW-148,bh=5;
+    doc.setFillColor(225,218,205);doc.roundedRect(bx,by,bw,bh,2,2,'F');
+    var bc=scoreCol(v);doc.setFillColor(...bc);doc.roundedRect(bx,by,bw*(v/100),bh,2,2,'F');
     y+=13;
-    if(r.scoreExplanations?.[k]) { doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...LIGHT); doc.splitTextToSize(r.scoreExplanations[k],CW).forEach(function(l){checkPage(12);doc.text(l,ML,y);y+=11;}); }
+    if(r.scoreExplanations?.[k]){doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(...LIGHT);doc.splitTextToSize(r.scoreExplanations[k],CW).forEach(function(l){checkPage(12);doc.text(l,ML,y);y+=11;});}
     y+=5;
   });
 
-  secHeader('Known Issues');
-  (r.knownIssues||[]).forEach(function(i) {
+  sec('Known Issues');
+  (r.knownIssues||[]).forEach(function(i){
     checkPage(40);
-    var sevC=i.severity==='High'?RED:i.severity==='Medium'?AMBER:GREEN;
-    doc.setFillColor(...sevC.map(function(c){return Math.min(255,c+180);})); doc.roundedRect(ML,y-10,46,16,2,2,'F');
-    doc.setFontSize(7); doc.setFont('helvetica','bold'); doc.setTextColor(...sevC); doc.text(i.severity.toUpperCase(),ML+3,y+1);
-    doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...DARK); doc.text(i.issue,ML+54,y); y+=13;
-    if(i.mileage){doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(...LIGHT);doc.text(i.mileage,ML+54,y);y+=11;}
-    if(i.detail){doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor(...MED);doc.splitTextToSize(i.detail,CW-54).forEach(function(l){checkPage(12);doc.text(l,ML+54,y);y+=11;});}
+    var sc2=i.severity==='High'?AVOID:i.severity==='Medium'?CAUTION:GOOD;
+    doc.setFillColor(...sc2.map(function(c){return Math.min(255,c+165);}));doc.roundedRect(ML,y-10,44,15,2,2,'F');
+    doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...sc2);doc.text(i.severity.toUpperCase(),ML+3,y);
+    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(...WALNUT);doc.text(i.issue,ML+52,y);y+=13;
+    if(i.mileage){doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(...LIGHT);doc.text(i.mileage,ML+52,y);y+=11;}
+    if(i.detail){doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor(...MED);doc.splitTextToSize(i.detail,CW-52).forEach(function(l){checkPage(12);doc.text(l,ML+52,y);y+=11;});}
     y+=7;
   });
 
-  secHeader('Fair Market Range');
-  checkPage(55); var colW=(CW-20)/3;
-  [{label:'LOW END',val:r.fairMarketRange?.low,mid:false},{label:'FAIR PRICE',val:r.fairMarketRange?.mid,mid:true},{label:'HIGH END',val:r.fairMarketRange?.high,mid:false}].forEach(function(col,i){
+  sec('Fair Market Range');
+  checkPage(55);var colW=(CW-20)/3;
+  [{label:'LOW END',val:r.fairMarketRange?.low,mid:false},{label:'FAIR VALUE',val:r.fairMarketRange?.mid,mid:true},{label:'HIGH END',val:r.fairMarketRange?.high,mid:false}].forEach(function(col,i){
     var cx2=ML+i*(colW+10);
-    doc.setFillColor(col.mid?245:248,col.mid?252:248,col.mid?235:248); doc.roundedRect(cx2,y,colW,50,3,3,'F');
-    if(col.mid){doc.setDrawColor(...ORANGE);doc.setLineWidth(0.8);doc.roundedRect(cx2,y,colW,50,3,3,'S');}
-    doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(...LIGHT);doc.text(col.label,cx2+colW/2,y+14,{align:'center'});
-    doc.setFontSize(16);doc.setFont('helvetica','bold');if(col.mid){doc.setTextColor(...ORANGE);}else{doc.setTextColor(...DARK);}
+    doc.setFillColor(col.mid?245:248,col.mid?242:244,col.mid?225:238);doc.roundedRect(cx2,y,colW,50,3,3,'F');
+    if(col.mid){doc.setDrawColor(...GOLD);doc.setLineWidth(0.8);doc.roundedRect(cx2,y,colW,50,3,3,'S');}
+    doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...LIGHT);doc.text(col.label,cx2+colW/2,y+14,{align:'center'});
+    doc.setFontSize(15);doc.setFont('helvetica','bold');if(col.mid){doc.setTextColor(...GOLD);}else{doc.setTextColor(...WALNUT);}
     doc.text(col.val||'-',cx2+colW/2,y+36,{align:'center'});
   });
-  y+=60; if(r.fairMarketRange?.note){doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(...LIGHT);doc.splitTextToSize(r.fairMarketRange.note,CW).forEach(function(l){doc.text(l,ML,y);y+=11;});}
-  y+=6;
+  y+=60;if(r.fairMarketRange?.note){doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(...LIGHT);doc.splitTextToSize(r.fairMarketRange.note,CW).forEach(function(l){doc.text(l,ML,y);y+=11;});}y+=6;
 
-  secHeader('Buying Tips & What to Inspect');
-  checkPage(20); var hw=(CW-14)/2;
-  doc.setFontSize(8.5);doc.setFont('helvetica','bold');doc.setTextColor(...DARK);
-  doc.text('Buying Tips',ML,y); doc.text('What to Inspect',ML+hw+14,y); y+=13;
+  sec('Before You Buy & What to Inspect');
+  checkPage(20);var hw=(CW-14)/2;
+  doc.setFontSize(8.5);doc.setFont('helvetica','bold');doc.setTextColor(...WALNUT);
+  doc.text('Before You Buy',ML,y);doc.text('What to Inspect',ML+hw+14,y);y+=13;
   var maxI=Math.max((r.buyingTips||[]).length,(r.thingsToInspect||[]).length);
   for(var i=0;i<maxI;i++){
     checkPage(18);
     if(r.buyingTips?.[i]){var ll=doc.splitTextToSize('→ '+r.buyingTips[i],hw);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(...MED);ll.forEach(function(l,li){doc.text(l,ML,y+li*11);});}
-    if(r.thingsToInspect?.[i]){var rl=doc.splitTextToSize('→ '+r.thingsToInspect[i],hw);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(...MED);rl.forEach(function(l,li){doc.text(l,ML+hw+14,y+li*11);});}
+    if(r.thingsToInspect?.[i]){var rl2=doc.splitTextToSize('→ '+r.thingsToInspect[i],hw);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(...MED);rl2.forEach(function(l,li){doc.text(l,ML+hw+14,y+li*11);});}
     y+=18;
   }
 
-  var totalPages=doc.internal.getNumberOfPages();
-  for(var p=1;p<=totalPages;p++){
+  var tp=doc.internal.getNumberOfPages();
+  for(var p=1;p<=tp;p++){
     doc.setPage(p);
-    doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(...LIGHT);
-    doc.text('Your Digital Mechanic · Know Before You Buy · For informational purposes only',ML,PH-22);
-    doc.text('Page '+p+' of '+totalPages,PW-MR,PH-22,{align:'right'});
+    doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...LIGHT);
+    doc.text('Drive Counselor · Confident Decisions. Every Drive. · For informational purposes only',ML,PH-22);
+    doc.text('Page '+p+' of '+tp,PW-ML,PH-22,{align:'right'});
   }
-  doc.save('YDM_' + (r.vehicle||'Report').replace(/\s+/g,'_') + '.pdf');
+  doc.save('DriveCounselor_'+(r.vehicle||'Assessment').replace(/\s+/g,'_')+'.pdf');
 }
 </script>
 </body>
