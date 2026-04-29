@@ -143,6 +143,50 @@ async function callClaudeAPI(prompt) {
   return JSON.parse(jsonMatch[0]);
 }
 
+// Engine lookup endpoint — AI-powered, dynamic
+app.post('/api/engines', async (req, res) => {
+  const { year, make, model, trim } = req.body;
+  if (!make || !model || !trim) return res.json({ engines: [] });
+
+  try {
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const prompt = `List the available engine options for a ${year || ''} ${make} ${model} ${trim} trim.
+Return ONLY a JSON array of engine strings, nothing else. No markdown, no explanation.
+Each string should be concise and include displacement, cylinder count/config, and horsepower.
+Example format: ["2.5L 4-Cyl (203 hp)", "3.5L V6 (301 hp)"]
+If there is only one engine option for this trim, return a single-item array.
+Be specific to the year if provided — engine options changed across generations.`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 300, messages: [{ role: 'user', content: prompt }] })
+    });
+    const data = await response.json();
+    const text = data.content?.filter(b => b.type === 'text').map(b => b.text).join('') || '[]';
+    const match = text.match(/\[[\s\S]*\]/);
+    const engines = match ? JSON.parse(match[0]) : [];
+    res.json({ engines });
+  } catch (err) {
+    console.error('Engine lookup error:', err);
+    res.json({ engines: [] });
+  }
+});
+
+// Contact / Support form endpoint
+app.post('/api/contact', async (req, res) => {
+  const { type, email, name, vehicle, situation, message, issue } = req.body;
+  // Log to console for now — replace with email service (Resend/SendGrid) when ready
+  console.log('=== ' + (type === 'support' ? 'SUPPORT' : 'CONTACT') + ' SUBMISSION ===');
+  console.log('From:', email, name ? '(' + name + ')' : '');
+  console.log('Vehicle:', vehicle);
+  if (situation) console.log('Situation:', situation);
+  if (issue) console.log('Issue type:', issue);
+  console.log('Message:', message);
+  console.log('====================================');
+  res.json({ success: true });
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
