@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Drive Counselor — Confident Decisions. Before You Drive Off the Lot.</title>
+  <title>Drive Counselor — Confident Decisions. Every Drive.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -347,7 +347,7 @@
 
 <!-- ══ HEADER ════════════════════════════════════════════════════════════════ -->
 <header>
-  <a class="logo" onclick="showPage('home')">
+  <a class="logo" onclick="showPage('home');resetToSearch();">
     <div class="logo-mark"><span>DC</span></div>
     <div class="logo-text">
       <span class="drive">Drive</span>
@@ -366,8 +366,8 @@
 
   <div id="search-wrap">
     <div class="hero">
-      <div class="hero-eyebrow">Car Guidance, Fast</div>
-      <h1>Confident<br>Decisions.<br><em>Before You Buy.</em></h1>
+      <div class="hero-eyebrow">AI-Powered Car Guidance</div>
+      <h1>Confident<br>Decisions.<br><em>Every Drive.</em></h1>
       <p>Get an honest, detailed assessment on any used vehicle before you buy. Reliability, known issues, fair market value — delivered like advice from a trusted friend who knows cars.</p>
 
       <div class="search-card" id="search-card">
@@ -486,7 +486,19 @@
     </div>
 
     <div class="card"><div class="card-title">Known Issues</div><div class="issues" id="issuesList"></div></div>
-    <div class="card"><div class="card-title">Maintenance Alerts</div><div class="maint-list" id="maintList"></div></div>
+    <div class="card" id="maintCard">
+      <div class="card-title">Maintenance Alerts</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div class="mi-col-title" style="margin-bottom:10px">🔧 DIY — Parts Cost Only</div>
+          <div class="maint-list" id="maintDIY"></div>
+        </div>
+        <div>
+          <div class="mi-col-title" style="margin-bottom:10px">🏪 Shop — Labor + Parts</div>
+          <div class="maint-list" id="maintShop"></div>
+        </div>
+      </div>
+    </div>
     <div class="card"><div class="card-title">What Owners Are Saying</div><div class="comm-list" id="commList"></div></div>
 
     <div class="card">
@@ -603,13 +615,14 @@
         <input type="email" id="c-email" placeholder="you@email.com"/>
         <label>Vehicle You're Looking At</label>
         <input type="text" id="c-vehicle" placeholder="e.g. 2016 Subaru Outback 3.6R, 94k miles, $14,500"/>
+        <label>Phone Number <span class="opt-label">(optional)</span></label>
+        <input type="tel" id="c-phone" placeholder="e.g. (555) 867-5309"/>
+
         <label>Your Situation</label>
         <select id="c-situation">
           <option value="">Select one...</option>
-          <option>I found a car online and want a second opinion</option>
-          <option>I'm at a dealership or with a private seller right now</option>
+          <option>I found a car and I want a second opinion</option>
           <option>I'm comparing a few options and need help deciding</option>
-          <option>I want help negotiating the price</option>
           <option>Something else</option>
         </select>
         <label>Tell me more</label>
@@ -927,9 +940,17 @@ function renderReport(r) {
     return '<div class="issue-card"><span class="sev sev-'+i.severity+'">'+i.severity+'</span><div class="issue-body"><div class="issue-name">'+i.issue+'</div><div class="issue-meta">'+(i.mileage||'')+'</div><div class="issue-detail">'+i.detail+'</div>'+(i.source?'<div class="issue-source">Source: '+i.source+'</div>':'')+'</div></div>';
   }).join('');
 
-  document.getElementById('maintList').innerHTML = (r.maintenanceAlerts||[]).map(function(m) {
-    return '<div class="maint-item"><div><div class="maint-name">'+m.item+'</div><div class="maint-int">'+m.interval+'</div></div><div class="maint-cost">'+m.estimatedCost+'</div><div class="maint-det">'+m.detail+'</div></div>';
-  }).join('');
+  var ma = r.maintenanceAlerts || {};
+  var diyItems = Array.isArray(ma) ? [] : (ma.diy || []);
+  var shopItems = Array.isArray(ma) ? ma : (ma.shop || []);
+  function maintHTML(items, costKey) {
+    if (!items.length) return '<div style="font-size:0.78rem;color:var(--muted);font-style:italic">No items listed</div>';
+    return items.map(function(m) {
+      return '<div class="maint-item"><div><div class="maint-name">'+m.item+'</div><div class="maint-int">'+m.interval+'</div></div><div class="maint-cost">'+(m[costKey]||m.estimatedCost||m.totalCost||m.partsCost||'')+'</div><div class="maint-det">'+m.detail+'</div></div>';
+    }).join('');
+  }
+  document.getElementById('maintDIY').innerHTML  = maintHTML(diyItems,  'partsCost');
+  document.getElementById('maintShop').innerHTML = maintHTML(shopItems, 'totalCost');
 
   document.getElementById('commList').innerHTML = (r.whatPeopleAreSaying||[]).map(function(c) {
     return '<div class="comm-card '+(c.sentiment||'')+'"><div class="comm-src">'+c.source+'<span class="sent sent-'+c.sentiment+'">'+c.sentiment+'</span></div><div class="comm-quote">"'+c.quote+'"</div>'+(c.link?'<a class="comm-link" href="'+c.link+'" target="_blank" rel="noopener">View source ↗</a>':'')+'</div>';
@@ -953,7 +974,7 @@ async function submitContact() {
   var btn = document.querySelector('#contact-form-wrap .submit-btn');
   btn.disabled = true; btn.textContent = 'Sending...';
   try {
-    await fetch('/api/contact', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'contact', name: document.getElementById('c-name').value, email, vehicle, situation: document.getElementById('c-situation').value, message }) });
+    await fetch('/api/contact', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ type:'contact', name: document.getElementById('c-name').value, email, phone: document.getElementById('c-phone').value, vehicle, situation: document.getElementById('c-situation').value, message }) });
     document.getElementById('contact-form-wrap').style.display = 'none';
     document.getElementById('contact-success').style.display = 'block';
   } catch(e) { btn.disabled = false; btn.textContent = 'Send My Question →'; alert('Something went wrong. Please try again.'); }
@@ -1001,125 +1022,370 @@ async function submitConsult() {
   }
 }
 
-// ── PDF ───────────────────────────────────────────────────────────────────────
+// ── PDF ─────────────────────────────────────────────────────────────────────
 async function downloadPDF() {
   if (!currentReport) return;
   var r = currentReport;
   var {jsPDF} = window.jspdf;
   var doc = new jsPDF({unit:'pt',format:'letter'});
   var PW = doc.internal.pageSize.getWidth(), PH = doc.internal.pageSize.getHeight();
-  var ML = 48, CW = PW - 96;
-  var y = 48;
-  var WALNUT=[44,36,22], GOLD=[196,148,72], MED=[120,110,90], LIGHT=[170,160,140], RULE=[210,200,185];
+  var ML = 52, MR = 52, CW = PW - ML - MR;
+  var y = ML;
+  var WALNUT=[44,36,22], GOLD=[196,148,72], MED=[100,90,70], LIGHT=[155,145,125], RULE=[210,200,185], WHITE=[255,255,255];
   var GOOD=[76,175,114], CAUTION=[212,168,67], AVOID=[200,90,90];
 
   function scoreCol(s) { return s>=90?GOOD:s>=75?[122,201,90]:s>=60?CAUTION:s>=45?[212,130,74]:AVOID; }
   function verdictCol(s) { return s>=90?GOOD:s>=75?[122,201,90]:s>=60?CAUTION:s>=45?[212,130,74]:AVOID; }
-  function checkPage(n) { if(y+(n||20)>PH-40){doc.addPage();y=48;} }
-  function rule() { doc.setDrawColor(...RULE);doc.setLineWidth(0.5);doc.line(ML,y,PW-ML,y);y+=12; }
-  function txt(str,size,color,bold,x,mw) {
-    if(!str)return;
-    doc.setFontSize(size);doc.setTextColor(...color);doc.setFont('helvetica',bold?'bold':'normal');
-    doc.splitTextToSize(String(str),mw||CW).forEach(function(l){checkPage(size*1.5);doc.text(l,x||ML,y);y+=size*1.45;});
-  }
-  function sec(title) {
-    checkPage(40);y+=8;
-    doc.setFillColor(245,242,235);doc.roundedRect(ML,y-13,CW,21,3,3,'F');
-    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(...WALNUT);
-    doc.text('// '+title.toUpperCase(),ML+8,y+2);y+=16;rule();
+
+  function checkPage(n) {
+    if (y + (n||20) > PH - 48) { doc.addPage(); y = ML; }
   }
 
-  // Header
-  doc.setFillColor(...WALNUT);doc.rect(0,0,PW,66,'F');
-  doc.setFillColor(...GOLD);doc.rect(0,62,PW,4,'F');
-  doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(...GOLD);
-  doc.text('DRIVE COUNSELOR',ML,30);
-  doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(160,140,100);
-  doc.text('AI-POWERED CAR GUIDANCE · CONFIDENT DECISIONS. EVERY DRIVE.',ML,46);
-  y=88;
+  function hRule() {
+    doc.setDrawColor(...RULE); doc.setLineWidth(0.5);
+    doc.line(ML, y, PW-MR, y); y += 10;
+  }
 
-  // Verdict box
+  // Wrapping text block — always safe
+  function textBlock(str, size, color, bold, indent) {
+    if (!str) return;
+    var x = ML + (indent || 0);
+    var w = CW - (indent || 0);
+    doc.setFontSize(size);
+    doc.setTextColor(...color);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    var lines = doc.splitTextToSize(String(str), w);
+    lines.forEach(function(line) {
+      checkPage(size * 1.6);
+      doc.text(line, x, y);
+      y += size * 1.5;
+    });
+  }
+
+  function sectionHeader(title) {
+    checkPage(36);
+    y += 6;
+    doc.setFillColor(240, 235, 225);
+    doc.roundedRect(ML, y - 13, CW, 20, 3, 3, 'F');
+    doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...WALNUT);
+    doc.text('// ' + title.toUpperCase(), ML + 8, y + 1);
+    y += 14;
+    hRule();
+  }
+
+  // ── HEADER ──
+  doc.setFillColor(...WALNUT); doc.rect(0,0,PW,64,'F');
+  doc.setFillColor(...GOLD);   doc.rect(0,60,PW,4,'F');
+  doc.setFontSize(18); doc.setFont('helvetica','bold'); doc.setTextColor(...GOLD);
+  doc.text('DRIVE COUNSELOR', ML, 32);
+  doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(160,140,100);
+  doc.text('AI-POWERED CAR GUIDANCE  ·  CONFIDENT DECISIONS. EVERY DRIVE.', ML, 48);
+  y = 82;
+
+  // ── VERDICT BOX ──
   var vc = verdictCol(r.overallScore);
-  doc.setFillColor(248,245,238);doc.roundedRect(ML,y,CW,88,4,4,'F');
-  doc.setDrawColor(...RULE);doc.roundedRect(ML,y,CW,88,4,4,'S');
-  doc.setFontSize(28);doc.setFont('helvetica','bold');doc.setTextColor(...vc);
-  doc.text(r.verdict||'Good Buy',ML+16,y+34);
-  doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(...WALNUT);
-  doc.text(r.vehicle+(r.mileage&&r.mileage!=='Not specified'?' · '+Number(r.mileage).toLocaleString()+' mi':''),ML+16,y+52);
-  doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor(...MED);
-  var rl=doc.splitTextToSize(r.verdictReason||'',CW-130);
-  rl.forEach(function(l,i){doc.text(l,ML+16,y+68+i*11);});
+  checkPage(96);
+  doc.setFillColor(248,245,238); doc.roundedRect(ML,y,CW,88,4,4,'F');
+  doc.setDrawColor(...RULE);     doc.roundedRect(ML,y,CW,88,4,4,'S');
+
+  // Verdict label
+  doc.setFontSize(26); doc.setFont('helvetica','bold'); doc.setTextColor(...vc);
+  doc.text(r.verdict || 'Good Buy', ML+14, y+32);
+
+  // Vehicle + mileage
+  var miLabel = (r.mileage && r.mileage !== 'Not specified') ? ' · ' + Number(r.mileage).toLocaleString() + ' mi' : '';
+  doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...WALNUT);
+  doc.text(r.vehicle + miLabel, ML+14, y+48);
+
+  // Verdict reason — wrapped, safe width
+  doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(...MED);
+  var reasonLines = doc.splitTextToSize(r.verdictReason || '', CW - 120);
+  var ry = y + 64;
+  reasonLines.forEach(function(l) { doc.text(l, ML+14, ry); ry += 12; });
 
   // Score circle
-  var cx=PW-ML-52, sc=r.overallScore;
-  doc.setDrawColor(...vc);doc.setLineWidth(2.5);doc.circle(cx,y+44,28,'S');
-  doc.setFontSize(19);doc.setFont('helvetica','bold');doc.setTextColor(...vc);
-  doc.text(String(sc),cx,y+51,{align:'center'});
-  doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...LIGHT);
-  doc.text('/100',cx,y+63,{align:'center'});
-  doc.text('SCORE',cx,y+80,{align:'center'});
-  y+=100;
+  var circX = PW - MR - 50;
+  doc.setDrawColor(...vc); doc.setLineWidth(2.5); doc.circle(circX, y+44, 26, 'S');
+  doc.setFontSize(18); doc.setFont('helvetica','bold'); doc.setTextColor(...vc);
+  doc.text(String(r.overallScore), circX, y+51, {align:'center'});
+  doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(...LIGHT);
+  doc.text('/100', circX, y+63, {align:'center'});
+  doc.text('SCORE', circX, y+78, {align:'center'});
 
-  sec('Our Assessment');txt(r.summary,9.5,MED);y+=6;
+  y += 98;
 
-  sec('Score Breakdown');
-  var sl={reliability:'Reliability',costToOwn:'Cost to Own',drivability:'Drivability',partsAvailability:'Parts Availability',communityRating:'Community Rating'};
-  Object.entries(r.scores||{}).forEach(function([k,v]){
-    checkPage(36);
-    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(...WALNUT);
-    doc.text((sl[k]||k)+': '+v+'/100',ML,y);
-    var bx=ML+148,by=y-9,bw=CW-148,bh=5;
-    doc.setFillColor(225,218,205);doc.roundedRect(bx,by,bw,bh,2,2,'F');
-    var bc=scoreCol(v);doc.setFillColor(...bc);doc.roundedRect(bx,by,bw*(v/100),bh,2,2,'F');
-    y+=13;
-    if(r.scoreExplanations?.[k]){doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(...LIGHT);doc.splitTextToSize(r.scoreExplanations[k],CW).forEach(function(l){checkPage(12);doc.text(l,ML,y);y+=11;});}
-    y+=5;
+  // Score legend
+  doc.setFontSize(7); doc.setFont('helvetica','normal');
+  var legendItems = [
+    {label:'0-44 Walk Away', color:AVOID},
+    {label:'45-59 Risky', color:[212,130,74]},
+    {label:'60-74 Careful', color:CAUTION},
+    {label:'75-89 Good Buy', color:[122,201,90]},
+    {label:'90-100 Excellent', color:GOOD}
+  ];
+  var lx = ML;
+  legendItems.forEach(function(li) {
+    doc.setFillColor(...li.color); doc.circle(lx+4, y-3, 3, 'F');
+    doc.setTextColor(...MED); doc.text(li.label, lx+10, y);
+    lx += doc.getTextWidth(li.label) + 20;
   });
+  y += 14; hRule();
 
-  sec('Known Issues');
-  (r.knownIssues||[]).forEach(function(i){
+  // ── 1. OUR ASSESSMENT ──
+  sectionHeader('Our Assessment');
+  textBlock(r.summary, 9.5, MED, false, 0);
+  y += 6;
+
+  // ── 2. SCORE BREAKDOWN ──
+  sectionHeader('Score Breakdown');
+  var scoreLabels = {reliability:'Reliability', costToOwn:'Cost to Own', drivability:'Drivability', partsAvailability:'Parts Availability', communityRating:'Community Rating'};
+  var scoreOrder = ['reliability','costToOwn','drivability','partsAvailability','communityRating'];
+  scoreOrder.forEach(function(k) {
+    var v = (r.scores || {})[k] || 0;
     checkPage(40);
-    var sc2=i.severity==='High'?AVOID:i.severity==='Medium'?CAUTION:GOOD;
-    doc.setFillColor(...sc2.map(function(c){return Math.min(255,c+165);}));doc.roundedRect(ML,y-10,44,15,2,2,'F');
-    doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...sc2);doc.text(i.severity.toUpperCase(),ML+3,y);
-    doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(...WALNUT);doc.text(i.issue,ML+52,y);y+=13;
-    if(i.mileage){doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(...LIGHT);doc.text(i.mileage,ML+52,y);y+=11;}
-    if(i.detail){doc.setFontSize(8.5);doc.setFont('helvetica','normal');doc.setTextColor(...MED);doc.splitTextToSize(i.detail,CW-52).forEach(function(l){checkPage(12);doc.text(l,ML+52,y);y+=11;});}
-    y+=7;
+    doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...WALNUT);
+    doc.text((scoreLabels[k]||k) + ':  ' + v + '/100', ML, y);
+    // Bar
+    var bx = ML + 152, by = y - 9, bw = CW - 152, bh = 5;
+    doc.setFillColor(225,218,205); doc.roundedRect(bx,by,bw,bh,2,2,'F');
+    doc.setFillColor(...scoreCol(v)); doc.roundedRect(bx,by,bw*(v/100),bh,2,2,'F');
+    y += 14;
+    if (r.scoreExplanations && r.scoreExplanations[k]) {
+      textBlock(r.scoreExplanations[k], 8, LIGHT, false, 0);
+    }
+    y += 4;
   });
 
-  sec('Fair Market Range');
-  checkPage(55);var colW=(CW-20)/3;
-  [{label:'LOW END',val:r.fairMarketRange?.low,mid:false},{label:'FAIR VALUE',val:r.fairMarketRange?.mid,mid:true},{label:'HIGH END',val:r.fairMarketRange?.high,mid:false}].forEach(function(col,i){
-    var cx2=ML+i*(colW+10);
-    doc.setFillColor(col.mid?245:248,col.mid?242:244,col.mid?225:238);doc.roundedRect(cx2,y,colW,50,3,3,'F');
-    if(col.mid){doc.setDrawColor(...GOLD);doc.setLineWidth(0.8);doc.roundedRect(cx2,y,colW,50,3,3,'S');}
-    doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...LIGHT);doc.text(col.label,cx2+colW/2,y+14,{align:'center'});
-    doc.setFontSize(15);doc.setFont('helvetica','bold');if(col.mid){doc.setTextColor(...GOLD);}else{doc.setTextColor(...WALNUT);}
-    doc.text(col.val||'-',cx2+colW/2,y+36,{align:'center'});
-  });
-  y+=60;if(r.fairMarketRange?.note){doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(...LIGHT);doc.splitTextToSize(r.fairMarketRange.note,CW).forEach(function(l){doc.text(l,ML,y);y+=11;});}y+=6;
-
-  sec('Before You Buy & What to Inspect');
-  checkPage(20);var hw=(CW-14)/2;
-  doc.setFontSize(8.5);doc.setFont('helvetica','bold');doc.setTextColor(...WALNUT);
-  doc.text('Before You Buy',ML,y);doc.text('What to Inspect',ML+hw+14,y);y+=13;
-  var maxI=Math.max((r.buyingTips||[]).length,(r.thingsToInspect||[]).length);
-  for(var i=0;i<maxI;i++){
-    checkPage(18);
-    if(r.buyingTips?.[i]){var ll=doc.splitTextToSize('→ '+r.buyingTips[i],hw);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(...MED);ll.forEach(function(l,li){doc.text(l,ML,y+li*11);});}
-    if(r.thingsToInspect?.[i]){var rl2=doc.splitTextToSize('→ '+r.thingsToInspect[i],hw);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(...MED);rl2.forEach(function(l,li){doc.text(l,ML+hw+14,y+li*11);});}
-    y+=18;
+  // ── 3. MILEAGE BREAKDOWN ──
+  var mb = r.mileageBreakdown;
+  if (mb) {
+    sectionHeader('Mileage Breakdown');
+    // Context block
+    if (mb.currentMileageContext) {
+      checkPage(40);
+      doc.setFillColor(248,244,234);
+      var ctxLines = doc.splitTextToSize(mb.currentMileageContext, CW - 20);
+      var ctxH = ctxLines.length * 13 + 16;
+      doc.roundedRect(ML, y-8, CW, ctxH, 3,3,'F');
+      doc.setDrawColor(...GOLD); doc.setLineWidth(2); doc.line(ML,y-8,ML,y-8+ctxH);
+      doc.setLineWidth(0.5);
+      textBlock(mb.currentMileageContext, 9, MED, false, 8);
+      y += 6;
+    }
+    // Two columns
+    var colHalf = (CW - 14) / 2;
+    checkPage(20);
+    doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...GOLD);
+    doc.text('SHOULD BE DONE BY NOW', ML, y); doc.text('COMING UP NEXT', ML+colHalf+14, y); y += 13;
+    var dueItems = mb.servicesDueByNow || [], upItems = mb.upcomingServices || [];
+    var colMax = Math.max(dueItems.length, upItems.length);
+    for (var ci = 0; ci < colMax; ci++) {
+      checkPage(14);
+      doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...MED);
+      if (dueItems[ci]) {
+        var dlines = doc.splitTextToSize('· ' + dueItems[ci], colHalf);
+        dlines.forEach(function(dl,di){ checkPage(12); doc.text(dl, ML, y+di*11); });
+      }
+      if (upItems[ci]) {
+        var ulines = doc.splitTextToSize('· ' + upItems[ci], colHalf);
+        ulines.forEach(function(ul,ui){ checkPage(12); doc.text(ul, ML+colHalf+14, y+ui*11); });
+      }
+      y += 14;
+    }
+    // Milestones
+    if ((mb.mileageMilestones||[]).length) {
+      y += 4;
+      doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...GOLD);
+      doc.text('KEY MILESTONES', ML, y); y += 12;
+      (mb.mileageMilestones||[]).forEach(function(ms) {
+        checkPage(18);
+        doc.setFillColor(240,235,225); doc.roundedRect(ML,y-9,CW,16,2,2,'F');
+        doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...GOLD);
+        doc.text(String(ms.mileage), ML+6, y);
+        var miW = doc.getTextWidth(String(ms.mileage)) + 14;
+        doc.setFont('helvetica','normal'); doc.setTextColor(...MED);
+        var evLines = doc.splitTextToSize(ms.event, CW - miW - 12);
+        doc.text(evLines[0]||'', ML+6+miW, y);
+        y += 18;
+      });
+    }
+    y += 4;
   }
 
-  var tp=doc.internal.getNumberOfPages();
-  for(var p=1;p<=tp;p++){
+  // ── 4. KNOWN ISSUES ──
+  sectionHeader('Known Issues');
+  (r.knownIssues||[]).forEach(function(issue) {
+    checkPage(50);
+    var sc2 = issue.severity==='High'?AVOID:issue.severity==='Medium'?CAUTION:GOOD;
+    var badgeW = 44;
+    doc.setFillColor(...sc2.map(function(c){return Math.min(255,c+165);}));
+    doc.roundedRect(ML, y-10, badgeW, 15, 2,2,'F');
+    doc.setFontSize(7); doc.setFont('helvetica','bold'); doc.setTextColor(...sc2);
+    doc.text((issue.severity||'').toUpperCase(), ML+3, y);
+
+    doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...WALNUT);
+    var nameLines = doc.splitTextToSize(issue.issue||'', CW - badgeW - 10);
+    doc.text(nameLines[0]||'', ML+badgeW+8, y);
+    y += 14;
+
+    if (issue.mileage) {
+      doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(...LIGHT);
+      doc.text(issue.mileage, ML+badgeW+8, y); y += 11;
+    }
+    if (issue.detail) {
+      textBlock(issue.detail, 8.5, MED, false, badgeW+8);
+    }
+    if (issue.source) {
+      doc.setFontSize(7.5); doc.setFont('helvetica','italic'); doc.setTextColor(...LIGHT);
+      var srcLines = doc.splitTextToSize('Source: ' + issue.source, CW - badgeW - 8);
+      srcLines.forEach(function(sl){ checkPage(12); doc.text(sl, ML+badgeW+8, y); y+=11; });
+    }
+    y += 8;
+  });
+
+  // ── 5. MAINTENANCE ALERTS (DIY / SHOP) ──
+  sectionHeader('Maintenance Alerts');
+  var ma = r.maintenanceAlerts || {};
+  var diyItems2 = Array.isArray(ma) ? [] : (ma.diy || []);
+  var shopItems2 = Array.isArray(ma) ? ma : (ma.shop || []);
+  var mHalf = (CW - 14) / 2;
+
+  checkPage(20);
+  doc.setFontSize(8.5); doc.setFont('helvetica','bold'); doc.setTextColor(...WALNUT);
+  doc.text('DIY — Parts Cost Only', ML, y);
+  doc.text('Shop — Labor + Parts', ML+mHalf+14, y); y += 13;
+
+  function renderMaintItems(items, xOff, costKey) {
+    items.forEach(function(m) {
+      checkPage(40);
+      var savedY = y;
+      doc.setFontSize(8.5); doc.setFont('helvetica','bold'); doc.setTextColor(...WALNUT);
+      var nameLines = doc.splitTextToSize(m.item||'', mHalf - 10);
+      nameLines.forEach(function(nl,ni){ doc.text(nl, ML+xOff, y+ni*12); });
+      y += nameLines.length * 12;
+      if (m.interval) {
+        doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(...LIGHT);
+        doc.text(m.interval, ML+xOff, y); y += 10;
+      }
+      var cost = m[costKey] || m.estimatedCost || m.totalCost || m.partsCost || '';
+      if (cost) {
+        doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...CAUTION);
+        doc.text(cost, ML+xOff, y); y += 10;
+      }
+      if (m.detail) {
+        doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...MED);
+        var dLines = doc.splitTextToSize(m.detail, mHalf - 10);
+        dLines.forEach(function(dl){ checkPage(12); doc.text(dl, ML+xOff, y); y+=11; });
+      }
+      y += 8;
+    });
+  }
+
+  // Save y, render DIY, save max y, reset, render Shop, take max
+  var preY = y;
+  renderMaintItems(diyItems2, 0, 'partsCost');
+  var afterDIY = y;
+  y = preY;
+  renderMaintItems(shopItems2, mHalf+14, 'totalCost');
+  y = Math.max(afterDIY, y) + 4;
+
+  // ── 6. WHAT OWNERS ARE SAYING ──
+  sectionHeader('What Owners Are Saying');
+  (r.whatPeopleAreSaying||[]).forEach(function(c) {
+    checkPage(50);
+    var sentC = c.sentiment==='Positive'?GOOD:c.sentiment==='Negative'?AVOID:CAUTION;
+    doc.setFontSize(7.5); doc.setFont('helvetica','bold'); doc.setTextColor(...sentC);
+    doc.text('[' + (c.sentiment||'').toUpperCase() + ']', ML, y);
+    var sw = doc.getTextWidth('[' + (c.sentiment||'').toUpperCase() + ']') + 8;
+    doc.setFont('helvetica','normal'); doc.setTextColor(...LIGHT);
+    var srcLines = doc.splitTextToSize(c.source||'', CW - sw);
+    doc.text(srcLines[0]||'', ML+sw, y); y += 13;
+    if (c.quote) {
+      doc.setFontSize(8.5); doc.setFont('helvetica','italic'); doc.setTextColor(...MED);
+      var qLines = doc.splitTextToSize('"' + c.quote + '"', CW);
+      qLines.forEach(function(ql){ checkPage(13); doc.text(ql, ML, y); y+=13; });
+    }
+    y += 6;
+  });
+
+  // ── 7. FAIR MARKET RANGE ──
+  sectionHeader('Fair Market Range');
+  checkPage(60);
+  var colW3 = (CW - 20) / 3;
+  [{label:'LOW END',val:r.fairMarketRange?.low,mid:false},{label:'FAIR VALUE',val:r.fairMarketRange?.mid,mid:true},{label:'HIGH END',val:r.fairMarketRange?.high,mid:false}].forEach(function(col,i) {
+    var cx2 = ML + i*(colW3+10);
+    doc.setFillColor(col.mid?245:248, col.mid?242:244, col.mid?225:238);
+    doc.roundedRect(cx2,y,colW3,52,3,3,'F');
+    if (col.mid) { doc.setDrawColor(...GOLD); doc.setLineWidth(0.8); doc.roundedRect(cx2,y,colW3,52,3,3,'S'); }
+    doc.setFontSize(7); doc.setFont('helvetica','bold'); doc.setTextColor(...LIGHT);
+    doc.text(col.label, cx2+colW3/2, y+14, {align:'center'});
+    doc.setFontSize(15); doc.setFont('helvetica','bold');
+    doc.setTextColor(...(col.mid ? GOLD : WALNUT));
+    doc.text(col.val||'-', cx2+colW3/2, y+36, {align:'center'});
+  });
+  y += 62;
+  if (r.fairMarketRange?.note) { textBlock(r.fairMarketRange.note, 8, LIGHT, false, 0); }
+  y += 6;
+
+  // ── 8. ABOUT THIS GENERATION ──
+  if (r.generationNotes) {
+    sectionHeader('About This Generation');
+    textBlock(r.generationNotes, 9, MED, false, 0);
+    y += 6;
+  }
+
+  // ── 9. BEFORE YOU BUY & WHAT TO INSPECT ──
+  sectionHeader('Before You Buy & What to Inspect');
+  checkPage(20);
+  var hw = (CW - 14) / 2;
+  doc.setFontSize(8.5); doc.setFont('helvetica','bold'); doc.setTextColor(...WALNUT);
+  doc.text('Before You Buy', ML, y);
+  doc.text('What to Inspect', ML+hw+14, y);
+  y += 13;
+
+  var maxTips = Math.max((r.buyingTips||[]).length, (r.thingsToInspect||[]).length);
+  for (var ti = 0; ti < maxTips; ti++) {
+    checkPage(22);
+    var rowH = 0;
+    if (r.buyingTips && r.buyingTips[ti]) {
+      doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...MED);
+      var bl = doc.splitTextToSize('- ' + r.buyingTips[ti], hw - 4);
+      bl.forEach(function(l,li){ doc.text(l, ML, y+li*11); });
+      rowH = Math.max(rowH, bl.length * 11);
+    }
+    if (r.thingsToInspect && r.thingsToInspect[ti]) {
+      doc.setFontSize(8); doc.setFont('helvetica','normal'); doc.setTextColor(...MED);
+      var il = doc.splitTextToSize('- ' + r.thingsToInspect[ti], hw - 4);
+      il.forEach(function(l,li){ doc.text(l, ML+hw+14, y+li*11); });
+      rowH = Math.max(rowH, il.length * 11);
+    }
+    y += rowH + 6;
+  }
+
+  // ── 10. ALTERNATIVES TO CONSIDER ──
+  if ((r.alternativesToConsider||[]).length) {
+    sectionHeader('Alternatives to Consider');
+    (r.alternativesToConsider||[]).forEach(function(a) {
+      checkPage(22);
+      doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(...WALNUT);
+      doc.text(a.vehicle||'', ML, y);
+      doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(...LIGHT);
+      var rLines = doc.splitTextToSize(a.reason||'', CW - 160);
+      rLines.forEach(function(rl,ri){ checkPage(12); doc.text(rl, PW-MR, y+ri*12, {align:'right'}); });
+      y += Math.max(14, rLines.length*12) + 4;
+    });
+  }
+
+  // ── FOOTER ON EVERY PAGE ──
+  var tp = doc.internal.getNumberOfPages();
+  for (var p = 1; p <= tp; p++) {
     doc.setPage(p);
-    doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...LIGHT);
-    doc.text('Drive Counselor · Confident Decisions. Every Drive. · For informational purposes only',ML,PH-22);
-    doc.text('Page '+p+' of '+tp,PW-ML,PH-22,{align:'right'});
+    doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(...LIGHT);
+    doc.text('Drive Counselor · Confident Decisions. Every Drive. · For informational purposes only', ML, PH-22);
+    doc.text('Page ' + p + ' of ' + tp, PW-MR, PH-22, {align:'right'});
   }
-  doc.save('DriveCounselor_'+(r.vehicle||'Assessment').replace(/\s+/g,'_')+'.pdf');
+
+  doc.save('DriveCounselor_' + (r.vehicle||'Assessment').replace(/\s+/g,'_') + '.pdf');
 }
 </script>
 </body>
