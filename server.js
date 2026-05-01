@@ -91,9 +91,14 @@ Respond ONLY with the JSON object below. No markdown, no explanation, no preambl
   "knownIssues": [
     { "issue": "Issue name", "severity": "High/Medium/Low", "mileage": "When it typically occurs", "detail": "1-2 sentence explanation", "source": "Where this is documented" }
   ],
-  "maintenanceAlerts": [
-    { "item": "Service item", "interval": "When it's due", "estimatedCost": "$X–$Y", "detail": "Why it matters at this mileage" }
-  ],
+  "maintenanceAlerts": {
+    "diy": [
+      { "item": "Service item", "interval": "When it's due", "partsCost": "$X–$Y", "detail": "What to do and why — for someone doing it themselves" }
+    ],
+    "shop": [
+      { "item": "Service item", "interval": "When it's due", "totalCost": "$X–$Y", "detail": "What a shop will do and roughly what to expect to pay for labor + parts" }
+    ]
+  },
   "whatPeopleAreSaying": [
     { "source": "Reddit r/[subreddit] or Car and Driver etc", "sentiment": "Positive/Negative/Mixed", "quote": "Paraphrased owner wisdom — specific, not generic", "link": "https://www.reddit.com/r/[relevant subreddit]" }
   ],
@@ -173,13 +178,13 @@ Be specific to the year provided — options changed across model years.`;
 
 // ── CONTACT / SUPPORT ─────────────────────────────────────────────────────────
 app.post('/api/contact', async (req, res) => {
-  const { type, email, name, vehicle, situation, message, issue, budget, timeline } = req.body;
+  const { type, email, name, phone, vehicle, situation, message, issue, budget, timeline } = req.body;
   const isSupport = type === 'support';
   const label = isSupport ? 'SUPPORT ISSUE' : 'CONSULTATION REQUEST';
 
   // Always log to console as backup
   console.log(`\n=== ${label} ===`);
-  console.log('From:', name || '', email);
+  console.log('From:', name || '', email, phone ? '| Phone: ' + phone : '');
   if (vehicle)   console.log('Vehicle:', vehicle);
   if (situation) console.log('Situation:', situation);
   if (budget)    console.log('Budget:', budget);
@@ -204,6 +209,7 @@ app.post('/api/contact', async (req, res) => {
       ] : [
         `<b>Name:</b> ${name || 'Not provided'}`,
         `<b>Email:</b> ${email}`,
+        `<b>Phone:</b> ${phone || 'Not provided'}`,
         `<b>Vehicle they're considering:</b> ${vehicle || 'Not specified'}`,
         `<b>Situation:</b> ${situation || 'Not specified'}`,
         `<b>Budget:</b> ${budget || 'Not specified'}`,
