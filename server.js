@@ -144,7 +144,24 @@ async function callClaudeAPI(prompt) {
   const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
   const match = text.match(/\{[\s\S]*\}/);
   if (!match) throw new Error('Could not parse report from response');
-  return JSON.parse(match[0]);
+
+  const report = JSON.parse(match[0]);
+
+  // Normalize maintenanceAlerts — ensure it always has diy/shop structure
+  const ma = report.maintenanceAlerts;
+  if (Array.isArray(ma)) {
+    // Old format — split into shop items only, diy empty
+    report.maintenanceAlerts = { diy: [], shop: ma };
+  } else if (!ma || typeof ma !== 'object') {
+    report.maintenanceAlerts = { diy: [], shop: [] };
+  } else {
+    report.maintenanceAlerts = {
+      diy:  Array.isArray(ma.diy)  ? ma.diy  : [],
+      shop: Array.isArray(ma.shop) ? ma.shop : []
+    };
+  }
+
+  return report;
 }
 
 // ── ENGINE LOOKUP ─────────────────────────────────────────────────────────────
