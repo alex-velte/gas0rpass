@@ -28,9 +28,10 @@ app.post('/api/report', async (req, res) => {
   }
 });
 
-function buildPrompt(year, make, model, trim, engine, mileage, vin) {
+function buildPrompt(year, make, model, trim, engine, transmission, mileage, vin) {
   const trimInfo    = trim   ? ` ${trim} trim` : '';
   const engineInfo  = engine ? ` (${engine})` : '';
+  const transInfo = transmission ? ` ${transmission}` : '';
   const mileageInfo = mileage ? ` with ${Number(mileage).toLocaleString()} miles` : '';
 
   const vehicleDesc = vin && (!year || !make || !model)
@@ -54,7 +55,10 @@ SCORING PHILOSOPHY:
 - Score breakdown: 90–100 = Excellent, 75–89 = Good Buy, 60–74 = Proceed Carefully, 45–59 = Risky Buy, 0–44 = Walk Away.
 - Match the verdict label exactly to the score range. Never use "Gas", "Pass", or similar language.
 - Write the summary the way a good counselor would speak — calm, direct, specific, empowering.
+- Fair market pricing must reflect the actual mileage provided. Price a 150k mile car at 150k mile rates. Assume well-maintained condition as the baseline.
+- Maintenance alerts: every item must appear in BOTH the DIY and Shop columns. Same items, same order. DIY = parts cost only. Shop = labor + parts total.
 ${trim ? `\nTRIM NOTE: User selected "${trim}" trim. Be specific to this trim's known characteristics.` : ''}${engine ? `\nENGINE NOTE: User selected "${engine}". All analysis must be specific to this exact engine — reliability, known failure patterns, and costs differ significantly between engine variants (e.g. Subaru H4 vs H6).` : ''}
+${transmission ? `\nTRANSMISSION: "${transmission}" — factor into reliability and known issues.` : ''}
 ${vin ? `\nVIN: ${vin} — use to confirm vehicle details.` : ''}
 
 Respond ONLY with the JSON object below. No markdown, no explanation, no preamble. Raw JSON only.
@@ -91,22 +95,23 @@ Respond ONLY with the JSON object below. No markdown, no explanation, no preambl
   "knownIssues": [
     { "issue": "Issue name", "severity": "High/Medium/Low", "mileage": "When it typically occurs", "detail": "1-2 sentence explanation", "source": "Where this is documented" }
   ],
-  "maintenanceAlerts": {
+"maintenanceAlerts": {
     "diy": [
-      { "item": "Service item", "interval": "When it's due", "partsCost": "$X–$Y", "detail": "What to do and why — for someone doing it themselves" }
+      { "item": "Service item", "interval": "When it's due", "partsCost": "$X–$Y", "detail": "How to do it yourself — parts only, no labor" }
     ],
     "shop": [
-      { "item": "Service item", "interval": "When it's due", "totalCost": "$X–$Y", "detail": "What a shop will do and roughly what to expect to pay for labor + parts" }
+      { "item": "Same service item as above", "interval": "Same interval", "totalCost": "$X–$Y", "detail": "What a shop charges for the same job — labor + parts" }
     ]
   },
   "whatPeopleAreSaying": [
     { "source": "Reddit r/[subreddit] or Car and Driver etc", "sentiment": "Positive/Negative/Mixed", "quote": "Paraphrased owner wisdom — specific, not generic", "link": "https://www.reddit.com/r/[relevant subreddit]" }
   ],
-  "fairMarketRange": {
+"fairMarketRange": {
     "low": "$X,XXX",
     "mid": "$X,XXX",
     "high": "$X,XXX",
-    "note": "One sentence on what drives price variation at this mileage"
+    "note": "Fair market value assumes a well-maintained example at this exact mileage. [One sentence on what drives price variation — condition, service history, region, options.]",
+    "conditionAssumption": "Well-maintained for mileage"
   },
   "buyingTips": ["Specific tip 1", "Specific tip 2", "Specific tip 3"],
   "thingsToInspect": ["What to look for 1", "What to look for 2", "What to look for 3"],
