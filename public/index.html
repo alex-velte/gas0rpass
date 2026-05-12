@@ -384,6 +384,9 @@
           <div class="form-group"><label>Engine <span class="opt-label">(optional)</span></label>
             <select id="engineSelect" disabled><option value="">Select Engine</option></select>
           </div>
+          <div class="form-group"><label>Transmission <span class="opt-label">(optional)</span></label>
+  <select id="transmissionSelect" disabled><option value="">Select Transmission</option></select>
+</div>
           <div class="form-group"><label>Mileage <span class="opt-label">(optional)</span></label>
             <input type="number" id="mileage" placeholder="e.g. 85000" min="0" max="999999"/>
           </div>
@@ -1296,6 +1299,22 @@ async function onTrimChange() {
     } else {
       eng.innerHTML = '<option value="">Engine info unavailable</option>';
     }
+    const transRes = await fetch('/api/transmissions', {
+  method: 'POST',
+  headers: {'Content-Type':'application/json'},
+  body: JSON.stringify({year, make, model, trim})
+});
+const transData = await transRes.json();
+var transEl = document.getElementById('transmissionSelect');
+transEl.innerHTML = '<option value="">Select Transmission (optional)</option>';
+if (transData.transmissions && transData.transmissions.length > 1) {
+  transData.transmissions.forEach(function(t) {
+    var o = document.createElement('option'); o.value = t; o.textContent = t; transEl.appendChild(o);
+  });
+  transEl.disabled = false;
+} else {
+  transEl.disabled = true;
+}
   } catch(e) {
     eng.innerHTML = '<option value="">Could not load engines</option>';
   }
@@ -1336,6 +1355,7 @@ async function runReport() {
   var model  = document.getElementById('modelSelect').value;
   var trim   = document.getElementById('trimSelect').value;
   var engine = document.getElementById('engineSelect').value;
+  var transmission = document.getElementById('transmissionSelect').value;
   var mileage= document.getElementById('mileage').value.trim();
   var vin    = document.getElementById('vin').value.trim();
 
@@ -1356,7 +1376,7 @@ async function runReport() {
     var res = await fetch('/api/report', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ year, make, model, trim, engine: (engine && engine !== 'unknown') ? engine : '', mileage, vin })
+      body: JSON.stringify({ year, make, model, trim, engine: (engine && engine !== 'unknown') ? engine : '', transmission, mileage, vin })
     });
     var data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Unknown error');
