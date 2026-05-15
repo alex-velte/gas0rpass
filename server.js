@@ -12,7 +12,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ── REPORT ENDPOINT ───────────────────────────────────────────────────────────
 app.post('/api/report', async (req, res) => {
-  const { year, make, model, trim, engine, mileage, vin } = req.body;
+  const { year, make, model, trim, engine, transmission, mileage, vin } = req.body;
 
   if (!vin && (!year || !make || !model)) {
     return res.status(400).json({ error: 'Please provide a VIN, or select at least Year, Make, and Model.' });
