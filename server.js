@@ -55,7 +55,7 @@ SCORING PHILOSOPHY:
 - Score breakdown: 90–100 = Excellent, 75–89 = Good Buy, 60–74 = Proceed Carefully, 45–59 = Risky Buy, 0–44 = Walk Away.
 - Match the verdict label exactly to the score range. Never use "Gas", "Pass", or similar language.
 - Write the summary the way a good counselor would speak — calm, direct, specific, empowering.
-- Fair market pricing must reflect the actual mileage provided. Price a 150k mile car at 150k mile rates. Assume well-maintained condition as the baseline.
+- Fair market pricing must be calibrated precisely to mileage. Use real-world private party values, not dealer retail. A 2013 Honda CR-V with 214k miles is worth $5,000–$8,000 in good condition — not $15,000. Mileage is the single biggest price factor after condition. Every 50k miles above average (15k/year) should reduce value significantly. Average mileage for a 10-year-old car is 150k. Anything above that is high mileage and must be priced accordingly. Use KBB private party and Carmax auction-style values as your reference point, not dealer asking prices.
 - Maintenance alerts: every item must appear in BOTH the DIY and Shop columns. Same items, same order. DIY = parts cost only. Shop = labor + parts total.
 ${trim ? `\nTRIM NOTE: User selected "${trim}" trim. Be specific to this trim's known characteristics.` : ''}${engine ? `\nENGINE NOTE: User selected "${engine}". All analysis must be specific to this exact engine — reliability, known failure patterns, and costs differ significantly between engine variants (e.g. Subaru H4 vs H6).` : ''}
 ${transmission ? `\nTRANSMISSION: "${transmission}" — factor into reliability and known issues.` : ''}
