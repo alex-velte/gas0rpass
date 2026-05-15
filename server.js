@@ -110,7 +110,7 @@ Respond ONLY with the JSON object below. No markdown, no explanation, no preambl
     "low": "$X,XXX",
     "mid": "$X,XXX",
     "high": "$X,XXX",
-    "note": "Fair market value assumes a well-maintained example at this exact mileage. [One sentence on what drives price variation — condition, service history, region, options.]",
+    "note": "State explicitly: 'Estimated private party value for a well-maintained example at [X] miles. At this mileage, expect prices toward the lower end of the market.' Adjust ranges to reflect actual mileage impact — high mileage vehicles should show ranges 40-60% below low-mileage examples of the same vehicle.",
     "conditionAssumption": "Well-maintained for mileage"
   },
   "buyingTips": ["Specific tip 1", "Specific tip 2", "Specific tip 3"],
