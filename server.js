@@ -19,8 +19,15 @@ app.post('/api/report', async (req, res) => {
   }
 
   try {
-    const prompt = buildPrompt(year, make, model, trim, engine, mileage, vin);
-    const report = await callClaudeAPI(prompt);
+    const prompt = buildPrompt(year, make, model, trim, engine, transmission, mileage, vin);
+    const [report, marketPricing] = await Promise.all([
+  callClaudeAPI(prompt),
+  fetchMarketPricing(year, make, model, trim, mileage)
+]);
+
+if (marketPricing) {
+  report.fairMarketRange = marketPricing;
+}
     res.json({ report });
   } catch (err) {
     console.error('Report error:', err);
@@ -167,6 +174,54 @@ async function callClaudeAPI(prompt) {
   }
 
   return report;
+}
+async function fetchMarketPricing(year, make, model, trim, mileage) {
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const mileageNote = mileage ? ` with ${Number(mileage).toLocaleString()} miles` : '';
+  
+  const prompt = `Search for current used car listings and return real market pricing for a ${year} ${make} ${model} ${trim || ''}${mileageNote}.
+
+Search CarGurus, AutoTrader, Facebook Marketplace, and Cars.com for actual current listings of this specific vehicle at similar mileage (within 20k miles).
+
+Return ONLY this JSON object, nothing else:
+{
+  "low": "$X,XXX",
+  "mid": "$X,XXX", 
+  "high": "$X,XXX",
+  "note": "Based on current listings on CarGurus, AutoTrader, and Cars.com. Private party value for a well-maintained example at this mileage.",
+  "conditionAssumption": "Well-maintained for mileage"
+}
+
+Rules:
+- Use PRIVATE PARTY values, not dealer retail
+- Mileage must heavily influence the price — high mileage vehicles are worth significantly less
+- Base ranges on ACTUAL current listings you find, not general knowledge
+- If mileage is above 150k, prices should reflect that reality
+- A 2013 Honda CR-V with 214k miles should be $4,000–$7,500 range, not $15,000`;
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-beta': 'web-search-2025-03-05'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 500,
+      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+
+  const data = await response.json();
+  const text = data.content
+    .filter(b => b.type === 'text')
+    .map(b => b.text)
+    .join('');
+  const match = text.match(/\{[\s\S]*?\}/);
+  return match ? JSON.parse(match[0]) : null;
 }
 
 app.post('/api/transmissions', async (req, res) => {
